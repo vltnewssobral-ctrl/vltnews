@@ -30,7 +30,6 @@
       min-height: 100vh;
     }
 
-    /* ── HEADER ── */
     header {
       background: var(--panel);
       border-bottom: 2px solid var(--green);
@@ -40,17 +39,9 @@
       gap: 16px;
     }
 
-    .logo-icon {
-      width: 48px;
-      height: 48px;
-      flex-shrink: 0;
-    }
+    .logo-icon { width: 48px; height: 48px; flex-shrink: 0; }
 
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-    }
-
+    .logo-text { display: flex; flex-direction: column; }
     .logo-text span:first-child {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 2rem;
@@ -58,7 +49,6 @@
       color: var(--green2);
       line-height: 1;
     }
-
     .logo-text span:last-child {
       font-size: 0.7rem;
       color: var(--muted);
@@ -78,25 +68,17 @@
       padding: 8px 14px;
       transition: border-color .2s;
     }
-
     .header-status:hover { border-color: var(--green); }
 
     #status-dot {
-      width: 14px;
-      height: 14px;
+      width: 14px; height: 14px;
       border-radius: 50%;
       background: #1a7a3c;
       box-shadow: 0 0 8px currentColor;
       flex-shrink: 0;
     }
+    #status-label { font-size: 0.8rem; font-weight: 600; letter-spacing: .5px; }
 
-    #status-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: .5px;
-    }
-
-    /* ── MAIN LAYOUT ── */
     main {
       max-width: 700px;
       margin: 0 auto;
@@ -106,7 +88,6 @@
       gap: 20px;
     }
 
-    /* ── CARDS ── */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -122,14 +103,12 @@
       align-items: center;
       gap: 10px;
     }
-
     .card-header h2 {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.1rem;
       letter-spacing: 2px;
       color: var(--green2);
     }
-
     .card-header .badge {
       font-size: 0.65rem;
       background: var(--green);
@@ -141,14 +120,10 @@
       margin-left: auto;
     }
 
-    /* ── TRACKER ── */
+    /* TRACKER */
     .tracker-body { padding: 20px 18px; }
 
-    .line-selector {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
+    .line-selector { display: flex; gap: 8px; margin-bottom: 20px; }
 
     .line-btn {
       flex: 1;
@@ -164,7 +139,6 @@
       transition: all .2s;
       text-align: center;
     }
-
     .line-btn.active {
       border-color: var(--green);
       color: var(--green2);
@@ -172,70 +146,39 @@
     }
 
     .track-label {
-      font-size: 0.7rem;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+      font-size: 0.7rem; color: var(--muted);
+      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
     }
 
-    /* Progress bar */
-    .progress-wrap {
-      position: relative;
-      padding: 28px 0 12px;
-    }
+    .progress-wrap { position: relative; padding: 28px 0 12px; }
 
     .stations-row {
-      display: flex;
-      justify-content: space-between;
-      position: relative;
+      display: flex; justify-content: space-between; position: relative;
     }
 
     .track-line {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--track);
-      border-radius: 2px;
-      transform: translateY(-50%);
-      z-index: 0;
+      position: absolute; top: 50%; left: 0; right: 0;
+      height: 4px; background: var(--track); border-radius: 2px;
+      transform: translateY(-50%); z-index: 0;
     }
-
     .track-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--green), var(--green2));
-      border-radius: 2px;
-      transition: width .8s ease;
+      border-radius: 2px; transition: width .8s ease;
     }
 
     .station-dot {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
     }
 
     .dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--track);
-      border: 2px solid var(--border);
-      transition: all .4s;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--track); border: 2px solid var(--border); transition: all .4s;
     }
-
-    .dot.passed {
-      background: var(--green);
-      border-color: var(--green2);
-    }
-
+    .dot.passed { background: var(--green); border-color: var(--green2); }
     .dot.current {
-      background: var(--yellow);
-      border-color: #fff;
+      background: var(--yellow); border-color: #fff;
       box-shadow: 0 0 10px var(--yellow);
       animation: pulse 1.2s infinite;
     }
@@ -246,470 +189,179 @@
     }
 
     .station-name {
-      font-size: 0.6rem;
-      color: var(--muted);
-      text-align: center;
-      max-width: 52px;
-      line-height: 1.3;
-      margin-top: 6px;
+      font-size: 0.6rem; color: var(--muted); text-align: center;
+      max-width: 52px; line-height: 1.3; margin-top: 6px;
     }
-
     .station-name.current-label { color: var(--yellow); font-weight: 700; }
 
-    /* VLT Icon on track */
     .vlt-icon {
-      position: absolute;
-      top: -18px;
-      transform: translateX(-50%);
-      font-size: 1.4rem;
-      transition: left .8s ease;
-      z-index: 2;
+      position: absolute; top: -18px; transform: translateX(-50%);
+      font-size: 1.4rem; transition: left .8s ease; z-index: 2;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,.6));
     }
 
     .tracker-info {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      margin-top: 20px; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 10px;
     }
 
     .info-box {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px;
     }
-
-    .info-box .label {
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .info-box .value {
-      font-family: 'Roboto Mono', monospace;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--green2);
-    }
-
+    .info-box .label { font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+    .info-box .value { font-family: 'Roboto Mono', monospace; font-size: 1rem; font-weight: 600; color: var(--green2); }
     .info-box .value.small { font-size: 0.85rem; }
 
-    .direction-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .direction-toggle label {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
+    .direction-toggle { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+    .direction-toggle label { font-size: 0.75rem; color: var(--muted); }
     .direction-toggle select {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      flex: 1;
-      cursor: pointer;
+      background: var(--panel); border: 1px solid var(--border);
+      color: var(--text); padding: 6px 10px; border-radius: 6px;
+      font-size: 0.8rem; flex: 1; cursor: pointer;
     }
 
-    .no-trip {
-      text-align: center;
-      padding: 30px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+    .no-trip { text-align: center; padding: 30px; color: var(--muted); font-size: 0.9rem; }
 
-    /* ── LINKS ── */
+    /* LINKS */
     .links-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
 
     .link-btn {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--panel);
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all .2s;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border: 1px solid var(--border);
+      border-radius: 10px; background: var(--panel);
+      color: var(--text); text-decoration: none;
+      font-weight: 600; font-size: 0.9rem; transition: all .2s;
     }
-
     .link-btn:hover {
       border-color: var(--green);
       background: rgba(26,122,60,.1);
       transform: translateX(4px);
     }
-
     .link-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
     }
-
-    .link-icon.wpp  { background: #1a4d2a; }
     .link-icon.inst { background: #4a1a3a; }
-
+    .link-icon.wpp  { background: #1a4d2a; }
+    .link-icon.chan { background: #1a2a4a; }
     .link-arrow { margin-left: auto; color: var(--muted); font-size: 0.8rem; }
 
-    /* ── COMMENTS ── */
+    /* COMMENTS */
     .comments-body { padding: 16px; }
-
-    .comment-form {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
+    .comment-form { display: flex; gap: 8px; margin-bottom: 16px; }
     .comment-input {
-      flex: 1;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-family: 'Inter', sans-serif;
-      resize: none;
-      outline: none;
-      transition: border-color .2s;
+      flex: 1; background: var(--panel); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 14px; border-radius: 8px;
+      font-size: 0.85rem; font-family: 'Inter', sans-serif;
+      resize: none; outline: none; transition: border-color .2s;
     }
-
     .comment-input:focus { border-color: var(--green); }
-
     .comment-send {
-      background: var(--green);
-      border: none;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.85rem;
-      transition: background .2s;
-      flex-shrink: 0;
+      background: var(--green); border: none; color: #fff;
+      padding: 10px 16px; border-radius: 8px; cursor: pointer;
+      font-weight: 700; font-size: 0.85rem; transition: background .2s; flex-shrink: 0;
     }
-
     .comment-send:hover { background: var(--green2); }
-
     .comments-list { display: flex; flex-direction: column; gap: 8px; }
-
     .comment-item {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 14px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 14px;
+      display: flex; gap: 10px; align-items: flex-start;
     }
-
-    .comment-item.admin-comment {
-      border-color: var(--green);
-      background: rgba(26,122,60,.08);
-    }
-
+    .comment-item.admin-comment { border-color: var(--green); background: rgba(26,122,60,.08); }
     .comment-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 700;
-      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 50%; background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
     }
-
     .comment-avatar.admin { background: var(--yellow); color: #000; }
-
     .comment-content { flex: 1; }
-
-    .comment-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 3px;
-    }
-
-    .comment-author {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--green2);
-    }
-
+    .comment-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .comment-author { font-size: 0.72rem; font-weight: 700; color: var(--green2); }
     .comment-author.admin { color: var(--yellow); }
+    .comment-time { font-size: 0.65rem; color: var(--muted); }
+    .admin-badge { font-size: 0.6rem; background: var(--yellow); color: #000; padding: 1px 5px; border-radius: 4px; font-weight: 700; }
+    .comment-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+    .expires-bar { height: 2px; background: var(--border); border-radius: 1px; margin-top: 8px; overflow: hidden; }
+    .expires-fill { height: 100%; background: var(--green); border-radius: 1px; }
+    .empty-comments { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; }
 
-    .comment-time {
-      font-size: 0.65rem;
-      color: var(--muted);
-    }
-
-    .admin-badge {
-      font-size: 0.6rem;
-      background: var(--yellow);
-      color: #000;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-weight: 700;
-    }
-
-    .comment-text {
-      font-size: 0.82rem;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    .expires-bar {
-      height: 2px;
-      background: var(--border);
-      border-radius: 1px;
-      margin-top: 8px;
-      overflow: hidden;
-    }
-
-    .expires-fill {
-      height: 100%;
-      background: var(--green);
-      border-radius: 1px;
-    }
-
-    .empty-comments {
-      text-align: center;
-      padding: 24px;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    /* ── STATUS MODAL ── */
+    /* STATUS MODAL */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.7);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.7); z-index: 100;
+      align-items: center; justify-content: center;
     }
-
     .modal-overlay.open { display: flex; }
-
     .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      width: 90%;
-      max-width: 360px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px; width: 90%; max-width: 360px;
     }
-
     .modal h3 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.3rem;
-      letter-spacing: 2px;
-      color: var(--green2);
-      margin-bottom: 16px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
+      letter-spacing: 2px; color: var(--green2); margin-bottom: 16px;
     }
-
     .modal-input {
-      width: 100%;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      margin-bottom: 14px;
+      width: 100%; background: var(--panel); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 14px; border-radius: 8px;
+      font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 14px;
     }
-
     .modal-input:focus { border-color: var(--green); }
-
-    .status-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
+    .status-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
     .status-opt {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 600;
-      transition: all .2s;
-      background: var(--panel);
+      display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      font-size: 0.82rem; font-weight: 600; transition: all .2s; background: var(--panel);
     }
-
     .status-opt.selected { border-color: var(--green2); background: rgba(26,122,60,.15); }
-
-    .status-opt .sdot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
+    .status-opt .sdot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
     .modal-actions { display: flex; gap: 8px; }
-
     .btn-cancel {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 0.85rem;
+      flex: 1; padding: 10px; border: 1px solid var(--border);
+      border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.85rem;
     }
-
     .btn-save {
-      flex: 2;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: var(--green);
-      color: #fff;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.85rem;
-      transition: background .2s;
+      flex: 2; padding: 10px; border: none; border-radius: 8px;
+      background: var(--green); color: #fff; cursor: pointer;
+      font-weight: 700; font-size: 0.85rem; transition: background .2s;
     }
-
     .btn-save:hover { background: var(--green2); }
+    .modal-error { font-size: 0.78rem; color: var(--red); margin-bottom: 10px; display: none; }
 
-    .modal-error {
-      font-size: 0.78rem;
-      color: var(--red);
-      margin-bottom: 10px;
-      display: none;
-    }
-
-    /* ── HORÁRIOS ── */
+    /* HORÁRIOS */
     .schedule-body { padding: 16px; }
-
-    .schedule-line-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
+    .schedule-line-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
     .schedule-tab {
-      flex: 1;
-      padding: 7px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      transition: all .2s;
+      flex: 1; padding: 7px; background: var(--panel); border: 1px solid var(--border);
+      color: var(--muted); border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; text-align: center; transition: all .2s;
     }
-
-    .schedule-tab.active {
-      border-color: var(--green);
-      color: var(--green2);
-      background: rgba(26,122,60,.1);
-    }
-
-    .schedule-direction-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
+    .schedule-tab.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.1); }
+    .schedule-direction-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
     .dir-tab {
-      flex: 1;
-      padding: 6px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 6px;
-      font-size: 0.7rem;
-      cursor: pointer;
-      text-align: center;
-      transition: all .2s;
+      flex: 1; padding: 6px; background: var(--panel); border: 1px solid var(--border);
+      color: var(--muted); border-radius: 6px; font-size: 0.7rem; cursor: pointer;
+      text-align: center; transition: all .2s;
     }
-
-    .dir-tab.active {
-      border-color: var(--amber);
-      color: var(--amber);
-    }
-
-    .schedule-table-wrap {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'Roboto Mono', monospace;
-      font-size: 0.72rem;
-    }
-
+    .dir-tab.active { border-color: var(--amber); color: var(--amber); }
+    .schedule-table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; }
     thead th {
-      background: var(--panel);
-      padding: 8px 6px;
-      text-align: center;
-      color: var(--green2);
-      font-size: 0.65rem;
-      letter-spacing: .5px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
+      background: var(--panel); padding: 8px 6px; text-align: center;
+      color: var(--green2); font-size: 0.65rem; letter-spacing: .5px;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
     }
-
     tbody tr:nth-child(even) { background: rgba(255,255,255,.02); }
+    tbody td { padding: 7px 6px; text-align: center; color: var(--text); border-bottom: 1px solid rgba(255,255,255,.04); }
+    tbody tr.current-trip td { background: rgba(26,122,60,.15); color: var(--green2); font-weight: 700; }
 
-    tbody td {
-      padding: 7px 6px;
-      text-align: center;
-      color: var(--text);
-      border-bottom: 1px solid rgba(255,255,255,.04);
-    }
-
-    tbody tr.current-trip td {
-      background: rgba(26,122,60,.15);
-      color: var(--green2);
-      font-weight: 700;
-    }
-
-    /* ── FOOTER ── */
     footer {
-      text-align: center;
-      padding: 20px;
-      color: var(--muted);
-      font-size: 0.7rem;
-      border-top: 1px solid var(--border);
+      text-align: center; padding: 20px; color: var(--muted);
+      font-size: 0.7rem; border-top: 1px solid var(--border);
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 420px) {
       .logo-text span:first-child { font-size: 1.6rem; }
       .station-name { font-size: 0.55rem; max-width: 40px; }
@@ -718,9 +370,7 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-  <!-- VLT SVG Logo -->
   <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="4" y="16" width="40" height="18" rx="4" fill="#1a7a3c"/>
     <rect x="8" y="20" width="8" height="6" rx="1" fill="#0d0d0d" opacity=".6"/>
@@ -733,19 +383,16 @@
     <rect x="20" y="10" width="8" height="8" rx="1" fill="#23a455" opacity=".7"/>
     <rect x="32" y="12" width="6" height="6" rx="1" fill="#23a455" opacity=".5"/>
   </svg>
-
   <div class="logo-text">
     <span>VLT NEWS</span>
     <span>Sobral · CE</span>
   </div>
-
   <div class="header-status" onclick="openStatusModal()">
     <div id="status-dot"></div>
     <span id="status-label">Carregando...</span>
   </div>
 </header>
 
-<!-- MAIN -->
 <main>
 
   <!-- TRACKER -->
@@ -760,7 +407,6 @@
         <button class="line-btn active" onclick="selectLine('sul')">Linha Sul<br><small style="font-weight:400;color:var(--muted)">COHAB II ↔ Sumaré</small></button>
         <button class="line-btn" onclick="selectLine('norte')">Linha Norte<br><small style="font-weight:400;color:var(--muted)">COHAB III ↔ N. Recanto</small></button>
       </div>
-
       <div class="direction-toggle">
         <label>Sentido:</label>
         <select id="direction-select" onchange="updateTracker()">
@@ -768,14 +414,8 @@
           <option value="1">Sumaré → COHAB II</option>
         </select>
       </div>
-
-      <div class="progress-wrap" id="progress-wrap" style="margin-top:24px">
-        <!-- injected by JS -->
-      </div>
-
-      <div class="tracker-info" id="tracker-info">
-        <!-- injected by JS -->
-      </div>
+      <div class="progress-wrap" id="progress-wrap" style="margin-top:24px"></div>
+      <div class="tracker-info" id="tracker-info"></div>
     </div>
   </div>
 
@@ -786,25 +426,19 @@
       <h2>Links</h2>
     </div>
     <div class="links-body" id="links-body">
-      <!-- injected / editable via admin -->
-      <a href="#" class="link-btn" id="link-wpp1">
-        <div class="link-icon wpp">💬</div>
-        <span>Grupo WhatsApp 1</span>
-        <span class="link-arrow">›</span>
-      </a>
-      <a href="#" class="link-btn" id="link-wpp2">
-        <div class="link-icon wpp">💬</div>
-        <span>Grupo WhatsApp 2</span>
-        <span class="link-arrow">›</span>
-      </a>
-      <a href="#" class="link-btn" id="link-wpp3">
-        <div class="link-icon wpp">💬</div>
-        <span>Grupo WhatsApp 3</span>
-        <span class="link-arrow">›</span>
-      </a>
-      <a href="#" class="link-btn" id="link-inst">
+      <a href="#" class="link-btn" id="link-inst" target="_blank" rel="noopener noreferrer">
         <div class="link-icon inst">📸</div>
-        <span>Instagram</span>
+        <span id="link-inst-name">Instagram</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a href="#" class="link-btn" id="link-comunidade" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon wpp">💬</div>
+        <span id="link-comunidade-name">Comunidade</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a href="#" class="link-btn" id="link-canal" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon chan">📢</div>
+        <span id="link-canal-name">Canal</span>
         <span class="link-arrow">›</span>
       </a>
     </div>
@@ -815,7 +449,7 @@
     <div class="card-header">
       <span>📢</span>
       <h2>Mural de Avisos</h2>
-      <span class="badge">SOME EM 6H</span>
+      <span class="badge">SOME EM 24H</span>
     </div>
     <div class="comments-body">
       <div class="comment-form">
@@ -884,11 +518,10 @@
 </div>
 
 <script>
-// ── CONFIG ──
 const SUPABASE_URL = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_hv_CGrOu6sRCyAveyzN6TA_ckEZRuCm';
 const ADMIN_PASSWORD = 'batata';
-const COMMENT_LIFETIME_HOURS = 6;
+const COMMENT_LIFETIME_HOURS = 24;
 
 const headers = {
   'apikey': SUPABASE_KEY,
@@ -897,12 +530,11 @@ const headers = {
   'Prefer': 'return=representation'
 };
 
-// ── HORÁRIOS ──
-const SCHEDULES = {
+// Horários padrão (usados se não houver dados no Supabase)
+const DEFAULT_SCHEDULES = {
   sul: {
     stations: ['COHAB II','Dom Expedito','B. do Arco','C. dos Velhos','Dom José','Sumaré'],
     directions: [
-      // Sentido COHAB II → Sumaré
       [
         ['5:52','5:54','5:57','6:02','6:06','6:12'],
         ['6:40','6:42','6:45','6:50','6:54','7:00'],
@@ -926,7 +558,6 @@ const SCHEDULES = {
         ['21:49','21:51','21:54','21:59','22:03','22:09'],
         ['22:37','22:39','22:42','22:47','22:51','22:57'],
       ],
-      // Sentido Sumaré → COHAB II
       [
         ['5:30','5:35','5:40','5:43','5:46','5:49'],
         ['6:18','6:23','6:28','6:31','6:34','6:37'],
@@ -955,7 +586,6 @@ const SCHEDULES = {
   norte: {
     stations: ['COHAB III','José Euclides','Junco','C. dos Velhos','A. da Brasília','Grendene','N. Recanto'],
     directions: [
-      // Sentido COHAB III → Novo Recanto
       [
         ['5:27','5:30','5:33','5:40','5:44','5:47','5:49'],
         ['6:15','6:18','6:21','6:28','6:32','6:35','6:37'],
@@ -980,7 +610,6 @@ const SCHEDULES = {
         ['22:12','22:15','22:18','22:25','22:29','22:32','22:34'],
         ['23:00','23:03','23:06','23:13','23:17','23:20','23:22'],
       ],
-      // Sentido Novo Recanto → COHAB III
       [
         ['5:51','5:53','5:56','6:02','6:07','6:10','6:13'],
         ['6:39','6:41','6:44','6:50','6:55','6:58','7:01'],
@@ -1008,14 +637,15 @@ const SCHEDULES = {
   }
 };
 
-// ── STATE ──
+// Schedules ativos (podem ser sobrescritos pelo Supabase)
+let SCHEDULES = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES));
+
 let currentLine = 'sul';
 let currentDirection = 0;
 let selectedStatus = 'green';
 let schedLine = 'sul';
 let schedDir = 0;
 
-// ── UTILS ──
 function timeToMinutes(t) {
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
@@ -1034,7 +664,6 @@ function timeAgo(iso) {
   return `${h}h atrás`;
 }
 
-// ── STATUS ──
 const STATUS_MAP = {
   green:  { color: '#1a7a3c', label: 'No horário' },
   yellow: { color: '#f5c842', label: 'Leve atraso' },
@@ -1056,16 +685,12 @@ function applyStatus(color) {
   document.getElementById('status-label').textContent = s.label;
 }
 
-// ── STATUS MODAL ──
 function openStatusModal() {
   document.getElementById('status-modal').classList.add('open');
   document.getElementById('status-password').value = '';
   document.getElementById('modal-error').style.display = 'none';
 }
-
-function closeStatusModal() {
-  document.getElementById('status-modal').classList.remove('open');
-}
+function closeStatusModal() { document.getElementById('status-modal').classList.remove('open'); }
 
 function selectStatus(el) {
   document.querySelectorAll('.status-opt').forEach(e => e.classList.remove('selected'));
@@ -1081,8 +706,7 @@ async function saveStatus() {
   }
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, {
-      method: 'PATCH',
-      headers,
+      method: 'PATCH', headers,
       body: JSON.stringify({ color: selectedStatus, updated_at: new Date().toISOString() })
     });
     applyStatus(selectedStatus);
@@ -1090,14 +714,23 @@ async function saveStatus() {
   } catch(e) { alert('Erro ao salvar status.'); }
 }
 
-// ── TRACKER ──
+// Carrega horários do Supabase (se existirem)
+async function loadSchedules() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, { headers });
+    const d = await r.json();
+    if (d && d[0] && d[0].data) {
+      SCHEDULES = d[0].data;
+    }
+  } catch(e) { /* usa DEFAULT_SCHEDULES */ }
+}
+
 function selectLine(line) {
   currentLine = line;
   document.querySelectorAll('.line-btn').forEach((b, i) => {
     b.classList.toggle('active', (i === 0 && line === 'sul') || (i === 1 && line === 'norte'));
   });
   const sel = document.getElementById('direction-select');
-  const data = SCHEDULES[line];
   if (line === 'sul') {
     sel.options[0].text = 'COHAB II → Sumaré';
     sel.options[1].text = 'Sumaré → COHAB II';
@@ -1117,12 +750,7 @@ function updateTracker() {
   const trips = data.directions[currentDirection];
   const now = nowMinutes();
 
-  // Find current or next trip
-  let tripIdx = -1;
-  let progress = 0;
-  let currentStationIdx = 0;
-  let nextTime = null;
-  let prevTime = null;
+  let tripIdx = -1, progress = 0, currentStationIdx = 0, nextTime = null;
 
   for (let t = 0; t < trips.length; t++) {
     const trip = trips[t];
@@ -1130,7 +758,6 @@ function updateTracker() {
     const end   = timeToMinutes(trip[trip.length - 1]);
     if (now >= start && now <= end) {
       tripIdx = t;
-      // find between which stations
       for (let s = 0; s < trip.length - 1; s++) {
         const tA = timeToMinutes(trip[s]);
         const tB = timeToMinutes(trip[s + 1]);
@@ -1138,20 +765,13 @@ function updateTracker() {
           currentStationIdx = s;
           const seg = tB - tA;
           progress = ((now - tA) / seg) * (1 / (trip.length - 1)) + s / (trip.length - 1);
-          prevTime = trip[s];
           nextTime = trip[s + 1];
           break;
         }
       }
       break;
     }
-    if (now < start) {
-      tripIdx = t;
-      progress = 0;
-      currentStationIdx = 0;
-      nextTime = trip[0];
-      break;
-    }
+    if (now < start) { tripIdx = t; progress = 0; currentStationIdx = 0; nextTime = trip[0]; break; }
   }
 
   const wrap = document.getElementById('progress-wrap');
@@ -1166,7 +786,6 @@ function updateTracker() {
   const trip = trips[tripIdx];
   const pct = Math.min(Math.max(progress, 0), 1);
 
-  // Build stations row
   let dotsHTML = stations.map((name, i) => {
     const tripTime = currentDirection === 0 ? trip[i] : trip[stations.length - 1 - i];
     const stMin = timeToMinutes(tripTime);
@@ -1179,8 +798,6 @@ function updateTracker() {
       <div class="station-name ${labelCls}">${name}</div>
     </div>`;
   }).join('');
-
-  const vltLeft = `calc(${pct * 100}% - 0px)`;
 
   wrap.innerHTML = `
     <div style="position:relative">
@@ -1213,7 +830,6 @@ function updateTracker() {
   `;
 }
 
-// ── SCHEDULE TABLE ──
 function selectScheduleLine(line, el) {
   schedLine = line;
   document.querySelectorAll('.schedule-tab').forEach(t => t.classList.remove('active'));
@@ -1234,7 +850,6 @@ function renderSchedule() {
   const trips = data.directions[schedDir];
   const now = nowMinutes();
 
-  // Find current trip index
   let currentTripIdx = -1;
   for (let t = 0; t < trips.length; t++) {
     const start = timeToMinutes(trips[t][0]);
@@ -1253,15 +868,10 @@ function renderSchedule() {
   }).join('');
 }
 
-// ── COMMENTS ──
 async function loadComments() {
   try {
     const cutoff = new Date(Date.now() - COMMENT_LIFETIME_HOURS * 3600000).toISOString();
-    // Delete expired
-    await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`, {
-      method: 'DELETE', headers
-    });
-    // Fetch remaining
+    await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`, { method: 'DELETE', headers });
     const r = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.desc&limit=20`, { headers });
     const data = await r.json();
     renderComments(data);
@@ -1274,7 +884,6 @@ function renderComments(comments) {
     list.innerHTML = '<div class="empty-comments">Nenhum aviso ainda. Seja o primeiro!</div>';
     return;
   }
-
   list.innerHTML = comments.map(c => {
     const lifetimeMs = COMMENT_LIFETIME_HOURS * 3600000;
     const age = Date.now() - new Date(c.created_at).getTime();
@@ -1308,8 +917,7 @@ async function postComment() {
   input.disabled = true;
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
-      method: 'POST',
-      headers,
+      method: 'POST', headers,
       body: JSON.stringify({ text, is_admin: false })
     });
     input.value = '';
@@ -1318,33 +926,32 @@ async function postComment() {
   input.disabled = false;
 }
 
-// ── LINKS from Supabase ──
 async function loadLinks() {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`, { headers });
     const data = await r.json();
     if (!data || data.length === 0) return;
-    const ids = ['link-wpp1','link-wpp2','link-wpp3','link-inst'];
+    // Ordem esperada: instagram, comunidade, canal
+    const slots = [
+      { el: 'link-inst',       nameEl: 'link-inst-name' },
+      { el: 'link-comunidade', nameEl: 'link-comunidade-name' },
+      { el: 'link-canal',      nameEl: 'link-canal-name' },
+    ];
     data.forEach((link, i) => {
-      const el = document.getElementById(ids[i]);
-      if (el) {
-        el.href = link.url || '#';
-        el.querySelector('span:not(.link-arrow)').textContent = link.name || el.querySelector('span').textContent;
-        el.target = '_blank';
-        el.rel = 'noopener noreferrer';
-      }
+      if (!slots[i]) return;
+      const a = document.getElementById(slots[i].el);
+      const nameSpan = document.getElementById(slots[i].nameEl);
+      if (a) a.href = link.url || '#';
+      if (nameSpan) nameSpan.textContent = link.name || nameSpan.textContent;
     });
   } catch(e) { console.error(e); }
 }
 
-// ── INIT ──
 async function init() {
-  await Promise.all([loadStatus(), loadComments(), loadLinks()]);
+  await Promise.all([loadStatus(), loadComments(), loadLinks(), loadSchedules()]);
   updateTracker();
   renderSchedule();
-  // Refresh tracker every minute
   setInterval(updateTracker, 60000);
-  // Refresh comments every 2 minutes
   setInterval(loadComments, 120000);
 }
 
