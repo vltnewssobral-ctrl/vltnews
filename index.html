@@ -52,6 +52,11 @@
     }
     .card-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; color: var(--green2); }
     .card-header .badge { font-size: 0.65rem; background: var(--green); color: #fff; padding: 2px 8px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase; margin-left: auto; }
+    .badge.live { background: var(--red); animation: livepulse 1.5s infinite; }
+    @keyframes livepulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(224,60,60,.5); }
+      50%      { box-shadow: 0 0 0 5px rgba(224,60,60,0); }
+    }
 
     /* ── TRACKER ── */
     .tracker-body { padding: 20px 18px; }
@@ -98,10 +103,19 @@
       transition: all .4s; position: relative; z-index: 1;
     }
     .dot.passed  { background: var(--green); border-color: var(--green2); }
-    .dot.current { background: var(--yellow); border-color: #fff; animation: pulse 1.2s infinite; }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 6px var(--yellow); }
-      50%      { box-shadow: 0 0 18px var(--yellow); }
+    /* AJUSTE: bolinha da estação atual maior e com anel pulsante */
+    .dot.current {
+      width: 20px;
+      height: 20px;
+      margin-top: -3px;
+      background: var(--yellow);
+      border-color: #fff;
+      box-shadow: 0 0 12px var(--yellow);
+      animation: pulseBig 1s infinite;
+    }
+    @keyframes pulseBig {
+      0%,100% { box-shadow: 0 0 6px var(--yellow), 0 0 0 4px rgba(245,200,66,0.3); }
+      50%      { box-shadow: 0 0 18px var(--yellow), 0 0 0 8px rgba(245,200,66,0); }
     }
     .station-name {
       position: absolute; top: 20px;
@@ -203,6 +217,8 @@
       .logo-text span:first-child { font-size: 1.6rem; }
       .station-name { font-size: 0.5rem; width: 42px; }
     }
+    /* AJUSTE: opcional: aumentar ligeiramente todas as bolinhas para melhorar visibilidade */
+    .dot { width: 16px; height: 16px; }
   </style>
 </head>
 <body>
@@ -237,7 +253,7 @@
     <div class="card-header">
       <span>🚃</span>
       <h2>Rastreador</h2>
-      <span class="badge" id="tracker-badge">AO VIVO</span>
+      <span class="badge live" id="tracker-badge">● AO VIVO</span>
     </div>
     <div class="tracker-body">
       <div class="line-selector">
@@ -461,8 +477,7 @@ function timeAgo(iso) {
 function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── Rastreador ───────────────────────────────────────────────────────────────
-// Encontra a viagem ativa (qualquer direção) e retorna {dir, tripIdx, pct, curSt, nextTime, trip, stations}
-function findActiveTrip(line) {
+function findTripState(line) {
   const data = SCHEDULES[line];
   const now  = nowMin();
 
@@ -476,31 +491,71 @@ function findActiveTrip(line) {
       const end   = toMin(trip[trip.length-1]);
 
       if (now >= start && now <= end) {
-        // VLT em viagem nesta direção
         let pct = 0, curSt = 0, nextTime = trip[1];
         for (let s = 0; s < trip.length-1; s++) {
           const a = toMin(trip[s]), b = toMin(trip[s+1]);
           if (now >= a && now <= b) {
-            curSt    = s;
-            pct      = (s + (now-a)/(b-a)) / (trip.length-1);
+            curSt = s;
+            pct   = (s + (now-a)/(b-a)) / (trip.length-1);
             nextTime = trip[s+1];
             break;
           }
         }
-        return { dir, tripIdx: t, pct, curSt, nextTime, trip, stations, inTrip: true };
+        return { state: 'moving', dir, trip, stations, pct, curSt, nextTime };
       }
     }
   }
 
-  // Nenhuma viagem ativa — próxima saída (direção 0)
-  const trips    = data.directions[0];
-  const stations = data.stations;
-  const now2     = nowMin();
-  for (let t = 0; t < trips.length; t++) {
-    if (toMin(trips[t][0]) > now2) {
-      return { dir: 0, tripIdx: t, pct: 0, curSt: -1, nextTime: trips[t][0], trip: trips[t], stations, inTrip: false };
+  let lastEnd = null, lastEndDir = 0, lastEndTrip = null, lastEndStations = null;
+  let nextStart = null, nextStartDir = 0, nextStartTrip = null, nextStartStations = null;
+
+  for (let dir = 0; dir < 2; dir++) {
+    const trips    = data.directions[dir];
+    const stations = dir === 0 ? data.stations : [...data.stations].reverse();
+    for (let t = 0; t < trips.length; t++) {
+      const trip  = trips[t];
+      const end   = toMin(trip[trip.length-1]);
+      const start = toMin(trip[0]);
+      if (end <= now) {
+        if (lastEnd === null || end > lastEnd) {
+          lastEnd = end; lastEndDir = dir; lastEndTrip = trip; lastEndStations = stations;
+        }
+      }
+      if (start > now) {
+        if (nextStart === null || start < nextStart) {
+          nextStart = start; nextStartDir = dir; nextStartTrip = trip; nextStartStations = stations;
+        }
+      }
     }
   }
+
+  if (lastEnd !== null && nextStart !== null && (now - lastEnd) <= 30) {
+    const waitMin = nextStart - now;
+    return {
+      state: 'stopped',
+      dir: lastEndDir,
+      trip: lastEndTrip,
+      stations: lastEndStations,
+      pct: 1,
+      curSt: lastEndStations.length - 1,
+      nextTime: nextStartTrip[0],
+      waitMin,
+      nextDir: nextStartDir,
+      nextStations: nextStartStations,
+    };
+  }
+
+  if (nextStart !== null) {
+    return {
+      state: 'waiting',
+      dir: nextStartDir,
+      trip: nextStartTrip,
+      stations: nextStartStations,
+      pct: 0, curSt: -1,
+      nextTime: nextStartTrip[0],
+    };
+  }
+
   return null;
 }
 
@@ -511,37 +566,81 @@ function selectTrackerLine(line, btn) {
   renderTracker();
 }
 
+// AJUSTE: função renderTracker reescrita para contador regressivo e destaque
 function renderTracker() {
   const content = document.getElementById('tracker-content');
-  const result  = findActiveTrip(trackerLine);
+  const result  = findTripState(trackerLine);
 
   if (!result) {
-    content.innerHTML = `<div class="no-trip">🌙 Sem viagens no momento.</div>`;
+    content.innerHTML = `<div class="no-trip">🌙 Sem viagens hoje.</div>`;
+    clearInterval(window._waitInterval);
     return;
   }
 
-  const { dir, pct, curSt, nextTime, trip, stations, inTrip } = result;
+  const { state, dir, pct, curSt, nextTime, trip, stations, waitMin } = result;
   const n   = stations.length;
   const now = nowMin();
 
-  // Dots
   const dotsHTML = stations.map((name, i) => {
-    const stMin = toMin(trip[i]);
+    const tripIdx = i;
+    const stMin   = toMin(trip[tripIdx]);
     let cls = '';
-    if (inTrip && now > stMin && i < curSt+1) cls = 'passed';
-    if (inTrip && i === curSt) cls = 'current';
+    if (state === 'moving') {
+      if (now > stMin && i <= curSt) cls = 'passed';
+      if (i === curSt) cls = 'current';
+    } else if (state === 'stopped') {
+      cls = i < n - 1 ? 'passed' : 'current';
+    }
     return `<div class="station-dot">
       <div class="dot ${cls}"></div>
       <span class="station-name ${cls==='current'?'cur':''}">${name}</span>
     </div>`;
   }).join('');
 
-  const dirLabel = dir === 0
-    ? `${stations[0]} → ${stations[n-1]}`
-    : `${stations[0]} → ${stations[n-1]}`;
+  let situacao, infoLabel, infoValue;
+
+  if (state === 'moving') {
+    situacao   = '🟢 Em viagem';
+    infoLabel  = 'Próxima parada';
+    infoValue  = nextTime;
+    clearInterval(window._waitInterval);
+  } else if (state === 'stopped') {
+    window._stoppedWait = {
+      nextTimeMin: toMin(nextTime),
+      nextTimeStr: nextTime,
+      waitMin: waitMin || 0
+    };
+    situacao   = '🟠 Parado no terminal';
+    infoLabel  = 'Próxima saída em';
+    infoValue  = `<span id="wait-countdown">${waitMin || 0} min</span>`;
+
+    clearInterval(window._waitInterval);
+    window._waitInterval = setInterval(() => {
+      const remaining = window._stoppedWait.nextTimeMin - nowMin();
+      const span = document.getElementById('wait-countdown');
+      if (span) {
+        if (remaining <= 0) {
+          span.textContent = '0 min (saindo)';
+          clearInterval(window._waitInterval);
+          renderTracker();
+        } else {
+          span.textContent = `${remaining} min`;
+        }
+      }
+    }, 30000);
+  } else {
+    situacao   = '🟡 Aguardando operação';
+    infoLabel  = 'Primeira saída';
+    infoValue  = nextTime;
+    clearInterval(window._waitInterval);
+  }
+
+  const waitBoxStyle = state === 'stopped' 
+    ? 'style="background: rgba(240,146,43,.12); border-color: var(--amber);"' 
+    : '';
 
   content.innerHTML = `
-    <p class="direction-label">Sentido: ${dirLabel}</p>
+    <p class="direction-label">Sentido: ${stations[0]} → ${stations[n-1]}</p>
     <div class="track-outer">
       <div class="track-rail"><div class="track-fill" style="width:${pct*100}%"></div></div>
       <div class="vlt-icon" style="left:${pct*100}%">🚃</div>
@@ -550,11 +649,11 @@ function renderTracker() {
     <div class="tracker-info">
       <div class="info-box">
         <div class="label">Situação</div>
-        <div class="value small">${inTrip ? '🟢 Em viagem' : '🟡 Próxima saída'}</div>
+        <div class="value small">${situacao}</div>
       </div>
-      <div class="info-box">
-        <div class="label">${inTrip ? 'Próxima parada' : 'Partida em'}</div>
-        <div class="value">${nextTime || '—'}</div>
+      <div class="info-box" ${waitBoxStyle}>
+        <div class="label">${infoLabel}</div>
+        <div class="value">${infoValue || '—'}</div>
       </div>
       <div class="info-box">
         <div class="label">Partida</div>
