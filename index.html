@@ -69,10 +69,20 @@
     }
     .line-btn.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.12); }
 
+    /* AJUSTE: indicador de status da linha no tracker */
+    .tracker-status-indicator {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .tracker-status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      box-shadow: 0 0 6px currentColor;
+    }
+
     /* Track */
     .track-outer {
       position: relative;
-      margin: 40px 0 44px; /* room above for icon, below for labels */
+      margin: 40px 0 44px;
     }
     .track-rail {
       position: absolute; top: 7px; left: 0; right: 0;
@@ -103,7 +113,6 @@
       transition: all .4s; position: relative; z-index: 1;
     }
     .dot.passed  { background: var(--green); border-color: var(--green2); }
-    /* AJUSTE: bolinha da estação atual maior e com anel pulsante */
     .dot.current {
       width: 20px;
       height: 20px;
@@ -217,7 +226,6 @@
       .logo-text span:first-child { font-size: 1.6rem; }
       .station-name { font-size: 0.5rem; width: 42px; }
     }
-    /* AJUSTE: opcional: aumentar ligeiramente todas as bolinhas para melhorar visibilidade */
     .dot { width: 16px; height: 16px; }
   </style>
 </head>
@@ -348,13 +356,9 @@ const SB = {
   'Prefer': 'return=representation'
 };
 
-// ── HORÁRIOS (do PDF oficial Metrofor) ──────────────────────────────────────
 const SCHEDULES = {
   sul: {
-    // Estações na ordem COHAB II → Sumaré (ida)
     stations: ['COHAB II','Dom Expedito','Blvd Duarte','C. dos Velhos','Dom José','Sumaré'],
-    // directions[0] = COHAB II → Sumaré (ida)
-    // directions[1] = Sumaré → COHAB II (volta)
     directions: [
       [
         ['05:52','05:54','05:57','06:02','06:06','06:12'],
@@ -405,7 +409,6 @@ const SCHEDULES = {
     ]
   },
   norte: {
-    // Estações na ordem COHAB III → Novo Recanto (ida)
     stations: ['COHAB III','J. Euclides','Junco','C. dos Velhos','A. Brasília','Grendene','N. Recanto'],
     directions: [
       [
@@ -459,13 +462,12 @@ const SCHEDULES = {
   }
 };
 
-// ── Estado ───────────────────────────────────────────────────────────────────
 let trackerLine  = 'sul';
 let selectedStatus = 'green';
 let schedLine = 'sul';
 let schedDir  = 0;
+let lineStatuses = { sul: 'green', norte: 'green' }; // AJUSTE: status por linha
 
-// ── Utilitários ──────────────────────────────────────────────────────────────
 function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
 function nowMin() { const n = new Date(); return n.getHours()*60+n.getMinutes(); }
 function timeAgo(iso) {
@@ -476,7 +478,7 @@ function timeAgo(iso) {
 }
 function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── Rastreador ───────────────────────────────────────────────────────────────
+// ── Rastreador ──
 function findTripState(line) {
   const data = SCHEDULES[line];
   const now  = nowMin();
@@ -566,7 +568,6 @@ function selectTrackerLine(line, btn) {
   renderTracker();
 }
 
-// AJUSTE: função renderTracker reescrita para contador regressivo e destaque
 function renderTracker() {
   const content = document.getElementById('tracker-content');
   const result  = findTripState(trackerLine);
@@ -580,6 +581,17 @@ function renderTracker() {
   const { state, dir, pct, curSt, nextTime, trip, stations, waitMin } = result;
   const n   = stations.length;
   const now = nowMin();
+
+  // AJUSTE: indicador de status da linha
+  const lineStatus = lineStatuses[trackerLine] || 'green';
+  const statusColor = STATUS_MAP[lineStatus]?.color || '#1a7a3c';
+  const statusLabel = STATUS_MAP[lineStatus]?.label || 'No horário';
+  const statusIndicatorHTML = `
+    <div class="tracker-status-indicator">
+      <span class="tracker-status-dot" style="background:${statusColor}; color:${statusColor};"></span>
+      <span>${trackerLine === 'sul' ? 'Linha Sul' : 'Linha Norte'}: ${statusLabel}</span>
+    </div>
+  `;
 
   const dotsHTML = stations.map((name, i) => {
     const tripIdx = i;
@@ -640,6 +652,7 @@ function renderTracker() {
     : '';
 
   content.innerHTML = `
+    ${statusIndicatorHTML}
     <p class="direction-label">Sentido: ${stations[0]} → ${stations[n-1]}</p>
     <div class="track-outer">
       <div class="track-rail"><div class="track-fill" style="width:${pct*100}%"></div></div>
@@ -667,7 +680,7 @@ function renderTracker() {
   `;
 }
 
-// ── Horários ─────────────────────────────────────────────────────────────────
+// ── Horários ──
 function selectScheduleLine(line, el) {
   schedLine = line;
   document.querySelectorAll('.schedule-tab').forEach(t => t.classList.remove('active'));
@@ -702,25 +715,38 @@ function renderSchedule() {
   }).join('');
 }
 
-// ── Status ───────────────────────────────────────────────────────────────────
+// ── Status ──
 const STATUS_MAP = {
   green:  { color: '#1a7a3c', label: 'No horário' },
   yellow: { color: '#f5c842', label: 'Leve atraso' },
   red:    { color: '#e03c3c', label: 'Muito atrasado' },
   black:  { color: '#555',    label: 'Fora de operação' }
 };
+
 async function loadStatus() {
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers: SB });
-    const d = await r.json();
-    if (d && d[0]) applyStatus(d[0].color);
-  } catch(e) { applyStatus('green'); }
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/status`, { headers: SB });
+    const data = await r.json();
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        if (item.line === 'sul') lineStatuses.sul = item.color;
+        if (item.line === 'norte') lineStatuses.norte = item.color;
+      });
+    }
+    // Atualiza indicador do header com o status da linha ativa no tracker
+    applyHeaderStatus();
+    renderTracker(); // re-renderiza para mostrar o status da linha
+  } catch(e) { applyHeaderStatus(); }
 }
-function applyStatus(color) {
+
+function applyHeaderStatus() {
+  // Mostra no header o status da linha atualmente selecionada no tracker
+  const color = lineStatuses[trackerLine] || 'green';
   const s = STATUS_MAP[color] || STATUS_MAP.green;
   document.getElementById('status-dot').style.cssText = `background:${s.color};box-shadow:0 0 8px ${s.color};width:14px;height:14px;border-radius:50%;flex-shrink:0`;
-  document.getElementById('status-label').textContent = s.label;
+  document.getElementById('status-label').textContent = `${trackerLine === 'sul' ? 'Sul' : 'Norte'}: ${s.label}`;
 }
+
 function openStatusModal()  { document.getElementById('status-modal').classList.add('open'); document.getElementById('status-password').value=''; document.getElementById('modal-error').style.display='none'; }
 function closeStatusModal() { document.getElementById('status-modal').classList.remove('open'); }
 function selectStatus(el) {
@@ -733,16 +759,30 @@ async function saveStatus() {
     document.getElementById('modal-error').style.display='block'; return;
   }
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, {
-      method:'PATCH', headers: SB,
-      body: JSON.stringify({ color: selectedStatus, updated_at: new Date().toISOString() })
-    });
-    applyStatus(selectedStatus);
+    // Salva status da linha ativa no tracker
+    const line = trackerLine;
+    const color = selectedStatus;
+    const check = await fetch(`${SUPABASE_URL}/rest/v1/status?line=eq.${line}`, { headers: SB });
+    const existing = await check.json();
+    if (existing && existing.length > 0) {
+      await fetch(`${SUPABASE_URL}/rest/v1/status?line=eq.${line}`, {
+        method:'PATCH', headers: SB,
+        body: JSON.stringify({ color, updated_at: new Date().toISOString() })
+      });
+    } else {
+      await fetch(`${SUPABASE_URL}/rest/v1/status`, {
+        method:'POST', headers: SB,
+        body: JSON.stringify({ line, color, updated_at: new Date().toISOString() })
+      });
+    }
+    lineStatuses[line] = color;
+    applyHeaderStatus();
+    renderTracker();
     closeStatusModal();
   } catch(e) { alert('Erro ao salvar status.'); }
 }
 
-// ── Mural ────────────────────────────────────────────────────────────────────
+// ── Mural ──
 async function loadComments() {
   try {
     const cutoff = new Date(Date.now()-COMMENT_LIFETIME_HOURS*3600000).toISOString();
@@ -787,7 +827,7 @@ async function postComment() {
   input.disabled = false;
 }
 
-// ── Links ────────────────────────────────────────────────────────────────────
+// ── Links ──
 const LINK_ICONS = ['📸','💬','📢','🌐','📌','🎵'];
 const LINK_COLORS = ['inst','wpp','chan','wpp','inst','chan'];
 
@@ -809,7 +849,7 @@ async function loadLinks() {
   } catch(e) { console.error(e); }
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── Init ──
 async function init() {
   await Promise.all([loadStatus(), loadComments(), loadLinks()]);
   renderTracker();
