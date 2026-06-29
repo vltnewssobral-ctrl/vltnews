@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VLT NEWS – Sobral</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:   #1a7a3c;
+      --green2:  #23a455;
+      --dark:    #0d0d0d;
+      --panel:   #141414;
+      --card:    #1a1a1a;
+      --border:  #2a2a2a;
+      --text:    #e8e8e8;
+      --muted:   #888;
+      --yellow:  #f5c842;
+      --red:     #e03c3c;
+      --amber:   #f0922b;
+      --track:   #2a2a2a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--panel);
+      border-bottom: 2px solid var(--green);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-text span:first-child {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      color: var(--green2);
+      line-height: 1;
+    }
+
+    .logo-text span:last-child {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .header-status {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      transition: border-color .2s;
+    }
+
+    .header-status:hover { border-color: var(--green); }
+
+    #status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #1a7a3c;
+      box-shadow: 0 0 8px currentColor;
+      flex-shrink: 0;
+    }
+
+    #status-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      color: var(--green2);
+    }
+
+    .card-header .badge {
+      font-size: 0.65rem;
+      background: var(--green);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+
+    /* ── TRACKER ── */
+    .tracker-body { padding: 20px 18px; }
+
+    .line-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .line-btn {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+    }
+
+    .line-btn.active {
+      border-color: var(--green);
+      color: var(--green2);
+      background: rgba(26,122,60,.12);
+    }
+
+    .track-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      position: relative;
+      padding: 28px 0 12px;
+    }
+
+    .stations-row {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .track-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--track);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+
+    .track-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--green2));
+      border-radius: 2px;
+      transition: width .8s ease;
+    }
+
+    .station-dot {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--track);
+      border: 2px solid var(--border);
+      transition: all .4s;
+    }
+
+    .dot.passed {
+      background: var(--green);
+      border-color: var(--green2);
+    }
+
+    .dot.current {
+      background: var(--yellow);
+      border-color: #fff;
+      box-shadow: 0 0 10px var(--yellow);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 6px var(--yellow); }
+      50%       { box-shadow: 0 0 18px var(--yellow); }
+    }
+
+    .station-name {
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 52px;
+      line-height: 1.3;
+      margin-top: 6px;
+    }
+
+    .station-name.current-label { color: var(--yellow); font-weight: 700; }
+
+    /* VLT Icon on track */
+    .vlt-icon {
+      position: absolute;
+      top: -18px;
+      transform: translateX(-50%);
+      font-size: 1.4rem;
+      transition: left .8s ease;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.6));
+    }
+
+    .tracker-info {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .info-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .info-box .label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .info-box .value {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--green2);
+    }
+
+    .info-box .value.small { font-size: 0.85rem; }
+
+    .direction-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .direction-toggle label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .direction-toggle select {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .no-trip {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── LINKS ── */
+    .links-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all .2s;
+    }
+
+    .link-btn:hover {
+      border-color: var(--green);
+      background: rgba(26,122,60,.1);
+      transform: translateX(4px);
+    }
+
+    .link-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .link-icon.wpp  { background: #1a4d2a; }
+    .link-icon.inst { background: #4a1a3a; }
+
+    .link-arrow { margin-left: auto; color: var(--muted); font-size: 0.8rem; }
+
+    /* ── COMMENTS ── */
+    .comments-body { padding: 16px; }
+
+    .comment-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .comment-input {
+      flex: 1;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .comment-input:focus { border-color: var(--green); }
+
+    .comment-send {
+      background: var(--green);
+      border: none;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .comment-send:hover { background: var(--green2); }
+
+    .comments-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .comment-item {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .comment-item.admin-comment {
+      border-color: var(--green);
+      background: rgba(26,122,60,.08);
+    }
+
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .comment-avatar.admin { background: var(--yellow); color: #000; }
+
+    .comment-content { flex: 1; }
+
+    .comment-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+
+    .comment-author {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--green2);
+    }
+
+    .comment-author.admin { color: var(--yellow); }
+
+    .comment-time {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .admin-badge {
+      font-size: 0.6rem;
+      background: var(--yellow);
+      color: #000;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .comment-text {
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .expires-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .expires-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 1px;
+    }
+
+    .empty-comments {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* ── STATUS MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      width: 90%;
+      max-width: 360px;
+    }
+
+    .modal h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      color: var(--green2);
+      margin-bottom: 16px;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      margin-bottom: 14px;
+    }
+
+    .modal-input:focus { border-color: var(--green); }
+
+    .status-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .status-opt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all .2s;
+      background: var(--panel);
+    }
+
+    .status-opt.selected { border-color: var(--green2); background: rgba(26,122,60,.15); }
+
+    .status-opt .sdot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .modal-actions { display: flex; gap: 8px; }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .btn-save {
+      flex: 2;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: background .2s;
+    }
+
+    .btn-save:hover { background: var(--green2); }
+
+    .modal-error {
+      font-size: 0.78rem;
+      color: var(--red);
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    /* ── HORÁRIOS ── */
+    .schedule-body { padding: 16px; }
+
+    .schedule-line-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .schedule-tab {
+      flex: 1;
+      padding: 7px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+    }
+
+    .schedule-tab.active {
+      border-color: var(--green);
+      color: var(--green2);
+      background: rgba(26,122,60,.1);
+    }
+
+    .schedule-direction-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .dir-tab {
+      flex: 1;
+      padding: 6px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+    }
+
+    .dir-tab.active {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .schedule-table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+    }
+
+    thead th {
+      background: var(--panel);
+      padding: 8px 6px;
+      text-align: center;
+      color: var(--green2);
+      font-size: 0.65rem;
+      letter-spacing: .5px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) { background: rgba(255,255,255,.02); }
+
+    tbody td {
+      padding: 7px 6px;
+      text-align: center;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+
+    tbody tr.current-trip td {
+      background: rgba(26,122,60,.15);
+      color: var(--green2);
+      font-weight: 700;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 420px) {
+      .logo-text span:first-child { font-size: 1.6rem; }
+      .station-name { font-size: 0.55rem; max-width: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <!-- VLT SVG Logo -->
+  <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="16" width="40" height="18" rx="4" fill="#1a7a3c"/>
+    <rect x="8" y="20" width="8" height="6" rx="1" fill="#0d0d0d" opacity=".6"/>
+    <rect x="20" y="20" width="8" height="6" rx="1" fill="#0d0d0d" opacity=".6"/>
+    <rect x="32" y="20" width="8" height="6" rx="1" fill="#0d0d0d" opacity=".6"/>
+    <rect x="2" y="30" width="44" height="4" rx="2" fill="#23a455"/>
+    <circle cx="13" cy="36" r="4" fill="#141414" stroke="#23a455" stroke-width="2"/>
+    <circle cx="35" cy="36" r="4" fill="#141414" stroke="#23a455" stroke-width="2"/>
+    <rect x="10" y="12" width="6" height="6" rx="1" fill="#23a455" opacity=".5"/>
+    <rect x="20" y="10" width="8" height="8" rx="1" fill="#23a455" opacity=".7"/>
+    <rect x="32" y="12" width="6" height="6" rx="1" fill="#23a455" opacity=".5"/>
+  </svg>
+
+  <div class="logo-text">
+    <span>VLT NEWS</span>
+    <span>Sobral · CE</span>
+  </div>
+
+  <div class="header-status" onclick="openStatusModal()">
+    <div id="status-dot"></div>
+    <span id="status-label">Carregando...</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- TRACKER -->
+  <div class="card">
+    <div class="card-header">
+      <span>🚃</span>
+      <h2>Rastreador</h2>
+      <span class="badge" id="tracker-badge">AO VIVO</span>
+    </div>
+    <div class="tracker-body">
+      <div class="line-selector">
+        <button class="line-btn active" onclick="selectLine('sul')">Linha Sul<br><small style="font-weight:400;color:var(--muted)">COHAB II ↔ Sumaré</small></button>
+        <button class="line-btn" onclick="selectLine('norte')">Linha Norte<br><small style="font-weight:400;color:var(--muted)">COHAB III ↔ N. Recanto</small></button>
+      </div>
+
+      <div class="direction-toggle">
+        <label>Sentido:</label>
+        <select id="direction-select" onchange="updateTracker()">
+          <option value="0">COHAB II → Sumaré</option>
+          <option value="1">Sumaré → COHAB II</option>
+        </select>
+      </div>
+
+      <div class="progress-wrap" id="progress-wrap" style="margin-top:24px">
+        <!-- injected by JS -->
+      </div>
+
+      <div class="tracker-info" id="tracker-info">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="card">
+    <div class="card-header">
+      <span>🔗</span>
+      <h2>Links</h2>
+    </div>
+    <div class="links-body" id="links-body">
+      <!-- injected / editable via admin -->
+      <a href="#" class="link-btn" id="link-wpp1">
+        <div class="link-icon wpp">💬</div>
+        <span>Grupo WhatsApp 1</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a href="#" class="link-btn" id="link-wpp2">
+        <div class="link-icon wpp">💬</div>
+        <span>Grupo WhatsApp 2</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a href="#" class="link-btn" id="link-wpp3">
+        <div class="link-icon wpp">💬</div>
+        <span>Grupo WhatsApp 3</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a href="#" class="link-btn" id="link-inst">
+        <div class="link-icon inst">📸</div>
+        <span>Instagram</span>
+        <span class="link-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MURAL -->
+  <div class="card">
+    <div class="card-header">
+      <span>📢</span>
+      <h2>Mural de Avisos</h2>
+      <span class="badge">SOME EM 6H</span>
+    </div>
+    <div class="comments-body">
+      <div class="comment-form">
+        <textarea class="comment-input" id="comment-input" rows="2" placeholder="Aviso rápido... ex: VLT lotado na estação Dom José"></textarea>
+        <button class="comment-send" onclick="postComment()">Enviar</button>
+      </div>
+      <div class="comments-list" id="comments-list">
+        <div class="empty-comments">Nenhum aviso ainda. Seja o primeiro!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HORÁRIOS -->
+  <div class="card">
+    <div class="card-header">
+      <span>🕐</span>
+      <h2>Horários</h2>
+    </div>
+    <div class="schedule-body">
+      <div class="schedule-line-tabs">
+        <div class="schedule-tab active" onclick="selectScheduleLine('sul', this)">Linha Sul</div>
+        <div class="schedule-tab" onclick="selectScheduleLine('norte', this)">Linha Norte</div>
+      </div>
+      <div class="schedule-direction-tabs">
+        <div class="dir-tab active" id="sched-dir-0" onclick="selectScheduleDir(0)">↗ Ida</div>
+        <div class="dir-tab" id="sched-dir-1" onclick="selectScheduleDir(1)">↙ Volta</div>
+      </div>
+      <div class="schedule-table-wrap">
+        <table id="schedule-table">
+          <thead id="schedule-thead"></thead>
+          <tbody id="schedule-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>VLT NEWS · Sobral, CE · Informações baseadas na grade oficial Metrofor</footer>
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay" id="status-modal">
+  <div class="modal">
+    <h3>Atualizar Status</h3>
+    <input class="modal-input" id="status-password" type="password" placeholder="Senha de admin" />
+    <div class="modal-error" id="modal-error">Senha incorreta.</div>
+    <div class="status-options">
+      <div class="status-opt selected" data-color="green" onclick="selectStatus(this)">
+        <div class="sdot" style="background:#1a7a3c"></div> No horário
+      </div>
+      <div class="status-opt" data-color="yellow" onclick="selectStatus(this)">
+        <div class="sdot" style="background:#f5c842"></div> Leve atraso
+      </div>
+      <div class="status-opt" data-color="red" onclick="selectStatus(this)">
+        <div class="sdot" style="background:#e03c3c"></div> Muito atrasado
+      </div>
+      <div class="status-opt" data-color="black" onclick="selectStatus(this)">
+        <div class="sdot" style="background:#555"></div> Fora de operação
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeStatusModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveStatus()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const SUPABASE_URL = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_hv_CGrOu6sRCyAveyzN6TA_ckEZRuCm';
+const ADMIN_PASSWORD = 'batata';
+const COMMENT_LIFETIME_HOURS = 6;
+
+const headers = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+// ── HORÁRIOS ──
+const SCHEDULES = {
+  sul: {
+    stations: ['COHAB II','Dom Expedito','B. do Arco','C. dos Velhos','Dom José','Sumaré'],
+    directions: [
+      // Sentido COHAB II → Sumaré
+      [
+        ['5:52','5:54','5:57','6:02','6:06','6:12'],
+        ['6:40','6:42','6:45','6:50','6:54','7:00'],
+        ['7:28','7:30','7:33','7:38','7:42','7:48'],
+        ['8:16','8:18','8:21','8:26','8:30','8:36'],
+        ['9:19','9:21','9:24','9:29','9:33','9:39'],
+        ['10:07','10:09','10:12','10:17','10:21','10:27'],
+        ['10:55','10:57','11:00','11:05','11:09','11:15'],
+        ['11:43','11:45','11:48','11:53','11:57','12:03'],
+        ['12:31','12:33','12:36','12:41','12:45','12:51'],
+        ['13:19','13:21','13:24','13:29','13:33','13:39'],
+        ['14:22','14:24','14:27','14:32','14:36','14:42'],
+        ['15:10','15:12','15:15','15:20','15:24','15:30'],
+        ['15:58','16:00','16:03','16:08','16:12','16:18'],
+        ['16:46','16:48','16:51','16:56','17:00','17:06'],
+        ['17:34','17:36','17:39','17:44','17:48','17:54'],
+        ['18:22','18:24','18:27','18:32','18:36','18:42'],
+        ['19:10','19:12','19:15','19:20','19:24','19:30'],
+        ['19:58','20:00','20:03','20:08','20:12','20:18'],
+        ['21:01','21:03','21:06','21:11','21:15','21:21'],
+        ['21:49','21:51','21:54','21:59','22:03','22:09'],
+        ['22:37','22:39','22:42','22:47','22:51','22:57'],
+      ],
+      // Sentido Sumaré → COHAB II
+      [
+        ['5:30','5:35','5:40','5:43','5:46','5:49'],
+        ['6:18','6:23','6:28','6:31','6:34','6:37'],
+        ['7:06','7:11','7:16','7:19','7:22','7:25'],
+        ['7:54','7:59','8:04','8:07','8:10','8:13'],
+        ['8:57','9:02','9:07','9:10','9:13','9:16'],
+        ['9:45','9:50','9:55','9:58','10:01','10:04'],
+        ['10:33','10:38','10:43','10:46','10:49','10:52'],
+        ['11:21','11:26','11:31','11:34','11:37','11:40'],
+        ['12:09','12:14','12:19','12:22','12:25','12:28'],
+        ['12:57','13:02','13:07','13:10','13:13','13:16'],
+        ['14:00','14:05','14:10','14:13','14:16','14:19'],
+        ['14:48','14:53','14:58','15:01','15:04','15:07'],
+        ['15:36','15:41','15:46','15:49','15:52','15:55'],
+        ['16:24','16:29','16:34','16:37','16:40','16:43'],
+        ['17:12','17:17','17:22','17:25','17:28','17:31'],
+        ['18:00','18:05','18:10','18:13','18:16','18:19'],
+        ['18:48','18:53','18:58','19:01','19:04','19:07'],
+        ['19:36','19:41','19:46','19:49','19:52','19:55'],
+        ['20:39','20:44','20:49','20:52','20:55','20:58'],
+        ['21:27','21:32','21:37','21:40','21:43','21:46'],
+        ['22:15','22:20','22:25','22:28','22:31','22:34'],
+      ]
+    ]
+  },
+  norte: {
+    stations: ['COHAB III','José Euclides','Junco','C. dos Velhos','A. da Brasília','Grendene','N. Recanto'],
+    directions: [
+      // Sentido COHAB III → Novo Recanto
+      [
+        ['5:27','5:30','5:33','5:40','5:44','5:47','5:49'],
+        ['6:15','6:18','6:21','6:28','6:32','6:35','6:37'],
+        ['7:03','7:06','7:09','7:16','7:20','7:23','7:25'],
+        ['7:51','7:54','7:57','8:04','8:08','8:11','8:13'],
+        ['8:54','8:57','9:00','9:07','9:11','9:14','9:16'],
+        ['9:42','9:45','9:48','9:55','9:59','10:02','10:04'],
+        ['10:30','10:33','10:36','10:43','10:47','10:50','10:52'],
+        ['11:18','11:21','11:24','11:31','11:35','11:38','11:40'],
+        ['12:06','12:09','12:12','12:19','12:23','12:26','12:28'],
+        ['12:54','12:57','13:00','13:07','13:11','13:14','13:16'],
+        ['13:57','14:00','14:03','14:10','14:14','14:17','14:19'],
+        ['14:45','14:48','14:51','14:58','15:02','15:05','15:07'],
+        ['15:33','15:36','15:39','15:46','15:50','15:53','15:55'],
+        ['16:21','16:24','16:27','16:34','16:38','16:41','16:43'],
+        ['17:09','17:12','17:15','17:22','17:26','17:29','17:31'],
+        ['17:57','18:00','18:03','18:10','18:14','18:17','18:19'],
+        ['18:45','18:48','18:51','18:58','19:02','19:05','19:07'],
+        ['19:33','19:36','19:39','19:46','19:50','19:53','19:55'],
+        ['20:36','20:39','20:42','20:49','20:53','20:56','20:58'],
+        ['21:24','21:27','21:30','21:37','21:41','21:44','21:46'],
+        ['22:12','22:15','22:18','22:25','22:29','22:32','22:34'],
+        ['23:00','23:03','23:06','23:13','23:17','23:20','23:22'],
+      ],
+      // Sentido Novo Recanto → COHAB III
+      [
+        ['5:51','5:53','5:56','6:02','6:07','6:10','6:13'],
+        ['6:39','6:41','6:44','6:50','6:55','6:58','7:01'],
+        ['7:27','7:29','7:32','7:38','7:43','7:46','7:49'],
+        ['8:15','8:17','8:20','8:26','8:31','8:34','8:37'],
+        ['9:18','9:20','9:23','9:29','9:34','9:37','9:40'],
+        ['10:06','10:08','10:11','10:17','10:22','10:25','10:28'],
+        ['10:54','10:56','10:59','11:05','11:10','11:13','11:16'],
+        ['11:42','11:44','11:47','11:53','11:58','12:01','12:04'],
+        ['12:30','12:32','12:35','12:41','12:46','12:49','12:52'],
+        ['13:18','13:20','13:23','13:29','13:34','13:37','13:40'],
+        ['14:21','14:23','14:26','14:32','14:37','14:40','14:43'],
+        ['15:09','15:11','15:14','15:20','15:25','15:28','15:31'],
+        ['15:57','15:59','16:02','16:08','16:13','16:16','16:19'],
+        ['16:45','16:47','16:50','16:56','17:01','17:04','17:07'],
+        ['17:33','17:35','17:38','17:44','17:49','17:52','17:55'],
+        ['18:21','18:23','18:26','18:32','18:37','18:40','18:43'],
+        ['19:09','19:11','19:14','19:20','19:25','19:28','19:31'],
+        ['19:57','19:59','20:02','20:08','20:13','20:16','20:19'],
+        ['21:00','21:02','21:05','21:11','21:16','21:19','21:22'],
+        ['21:48','21:50','21:53','21:59','22:04','22:07','22:10'],
+        ['22:36','22:38','22:41','22:47','22:52','22:55','22:58'],
+      ]
+    ]
+  }
+};
+
+// ── STATE ──
+let currentLine = 'sul';
+let currentDirection = 0;
+let selectedStatus = 'green';
+let schedLine = 'sul';
+let schedDir = 0;
+
+// ── UTILS ──
+function timeToMinutes(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function nowMinutes() {
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes();
+}
+
+function timeAgo(iso) {
+  const diff = Math.floor((Date.now() - new Date(iso)) / 60000);
+  if (diff < 1)  return 'agora mesmo';
+  if (diff < 60) return `${diff} min atrás`;
+  const h = Math.floor(diff / 60);
+  return `${h}h atrás`;
+}
+
+// ── STATUS ──
+const STATUS_MAP = {
+  green:  { color: '#1a7a3c', label: 'No horário' },
+  yellow: { color: '#f5c842', label: 'Leve atraso' },
+  red:    { color: '#e03c3c', label: 'Muito atrasado' },
+  black:  { color: '#555',    label: 'Fora de operação' }
+};
+
+async function loadStatus() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers });
+    const d = await r.json();
+    if (d && d[0]) applyStatus(d[0].color);
+  } catch(e) { applyStatus('green'); }
+}
+
+function applyStatus(color) {
+  const s = STATUS_MAP[color] || STATUS_MAP.green;
+  document.getElementById('status-dot').style.cssText = `background:${s.color};box-shadow:0 0 8px ${s.color}`;
+  document.getElementById('status-label').textContent = s.label;
+}
+
+// ── STATUS MODAL ──
+function openStatusModal() {
+  document.getElementById('status-modal').classList.add('open');
+  document.getElementById('status-password').value = '';
+  document.getElementById('modal-error').style.display = 'none';
+}
+
+function closeStatusModal() {
+  document.getElementById('status-modal').classList.remove('open');
+}
+
+function selectStatus(el) {
+  document.querySelectorAll('.status-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStatus = el.dataset.color;
+}
+
+async function saveStatus() {
+  const pwd = document.getElementById('status-password').value;
+  if (pwd !== ADMIN_PASSWORD) {
+    document.getElementById('modal-error').style.display = 'block';
+    return;
+  }
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ color: selectedStatus, updated_at: new Date().toISOString() })
+    });
+    applyStatus(selectedStatus);
+    closeStatusModal();
+  } catch(e) { alert('Erro ao salvar status.'); }
+}
+
+// ── TRACKER ──
+function selectLine(line) {
+  currentLine = line;
+  document.querySelectorAll('.line-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && line === 'sul') || (i === 1 && line === 'norte'));
+  });
+  const sel = document.getElementById('direction-select');
+  const data = SCHEDULES[line];
+  if (line === 'sul') {
+    sel.options[0].text = 'COHAB II → Sumaré';
+    sel.options[1].text = 'Sumaré → COHAB II';
+  } else {
+    sel.options[0].text = 'COHAB III → Novo Recanto';
+    sel.options[1].text = 'Novo Recanto → COHAB III';
+  }
+  currentDirection = 0;
+  sel.value = '0';
+  updateTracker();
+}
+
+function updateTracker() {
+  currentDirection = parseInt(document.getElementById('direction-select').value);
+  const data = SCHEDULES[currentLine];
+  const stations = currentDirection === 0 ? data.stations : [...data.stations].reverse();
+  const trips = data.directions[currentDirection];
+  const now = nowMinutes();
+
+  // Find current or next trip
+  let tripIdx = -1;
+  let progress = 0;
+  let currentStationIdx = 0;
+  let nextTime = null;
+  let prevTime = null;
+
+  for (let t = 0; t < trips.length; t++) {
+    const trip = trips[t];
+    const start = timeToMinutes(trip[0]);
+    const end   = timeToMinutes(trip[trip.length - 1]);
+    if (now >= start && now <= end) {
+      tripIdx = t;
+      // find between which stations
+      for (let s = 0; s < trip.length - 1; s++) {
+        const tA = timeToMinutes(trip[s]);
+        const tB = timeToMinutes(trip[s + 1]);
+        if (now >= tA && now <= tB) {
+          currentStationIdx = s;
+          const seg = tB - tA;
+          progress = ((now - tA) / seg) * (1 / (trip.length - 1)) + s / (trip.length - 1);
+          prevTime = trip[s];
+          nextTime = trip[s + 1];
+          break;
+        }
+      }
+      break;
+    }
+    if (now < start) {
+      tripIdx = t;
+      progress = 0;
+      currentStationIdx = 0;
+      nextTime = trip[0];
+      break;
+    }
+  }
+
+  const wrap = document.getElementById('progress-wrap');
+  const info = document.getElementById('tracker-info');
+
+  if (tripIdx === -1) {
+    wrap.innerHTML = `<div class="no-trip">🌙 Sem viagens no momento.<br>Primeira saída às <b>${trips[0][0]}</b></div>`;
+    info.innerHTML = '';
+    return;
+  }
+
+  const trip = trips[tripIdx];
+  const pct = Math.min(Math.max(progress, 0), 1);
+
+  // Build stations row
+  let dotsHTML = stations.map((name, i) => {
+    const tripTime = currentDirection === 0 ? trip[i] : trip[stations.length - 1 - i];
+    const stMin = timeToMinutes(tripTime);
+    let cls = '';
+    if (tripIdx !== -1 && now > stMin) cls = 'passed';
+    if (i === currentStationIdx && now >= timeToMinutes(trip[0])) cls = 'current';
+    const labelCls = cls === 'current' ? 'current-label' : '';
+    return `<div class="station-dot">
+      <div class="dot ${cls}"></div>
+      <div class="station-name ${labelCls}">${name}</div>
+    </div>`;
+  }).join('');
+
+  const vltLeft = `calc(${pct * 100}% - 0px)`;
+
+  wrap.innerHTML = `
+    <div style="position:relative">
+      <div class="vlt-icon" style="left:${pct*100}%">🚃</div>
+    </div>
+    <div class="stations-row">
+      <div class="track-line"><div class="track-fill" style="width:${pct*100}%"></div></div>
+      ${dotsHTML}
+    </div>
+  `;
+
+  const inProgress = now >= timeToMinutes(trip[0]) && now <= timeToMinutes(trip[trip.length-1]);
+  info.innerHTML = `
+    <div class="info-box">
+      <div class="label">Situação</div>
+      <div class="value small">${inProgress ? '🟢 Em viagem' : '🟡 Próxima saída'}</div>
+    </div>
+    <div class="info-box">
+      <div class="label">${inProgress ? 'Próxima parada' : 'Partida em'}</div>
+      <div class="value">${nextTime || '—'}</div>
+    </div>
+    <div class="info-box">
+      <div class="label">Partida</div>
+      <div class="value">${trip[0]}</div>
+    </div>
+    <div class="info-box">
+      <div class="label">Chegada</div>
+      <div class="value">${trip[trip.length-1]}</div>
+    </div>
+  `;
+}
+
+// ── SCHEDULE TABLE ──
+function selectScheduleLine(line, el) {
+  schedLine = line;
+  document.querySelectorAll('.schedule-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderSchedule();
+}
+
+function selectScheduleDir(dir) {
+  schedDir = dir;
+  document.getElementById('sched-dir-0').classList.toggle('active', dir === 0);
+  document.getElementById('sched-dir-1').classList.toggle('active', dir === 1);
+  renderSchedule();
+}
+
+function renderSchedule() {
+  const data = SCHEDULES[schedLine];
+  const stations = schedDir === 0 ? data.stations : [...data.stations].reverse();
+  const trips = data.directions[schedDir];
+  const now = nowMinutes();
+
+  // Find current trip index
+  let currentTripIdx = -1;
+  for (let t = 0; t < trips.length; t++) {
+    const start = timeToMinutes(trips[t][0]);
+    const end   = timeToMinutes(trips[t][trips[t].length - 1]);
+    if (now >= start && now <= end) { currentTripIdx = t; break; }
+    if (now < start) { currentTripIdx = t; break; }
+  }
+
+  document.getElementById('schedule-thead').innerHTML =
+    `<tr>${stations.map(s => `<th>${s}</th>`).join('')}</tr>`;
+
+  document.getElementById('schedule-tbody').innerHTML = trips.map((trip, i) => {
+    const cells = schedDir === 0 ? trip : [...trip].reverse();
+    const cls = i === currentTripIdx ? 'current-trip' : '';
+    return `<tr class="${cls}">${cells.map(t => `<td>${t}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+// ── COMMENTS ──
+async function loadComments() {
+  try {
+    const cutoff = new Date(Date.now() - COMMENT_LIFETIME_HOURS * 3600000).toISOString();
+    // Delete expired
+    await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`, {
+      method: 'DELETE', headers
+    });
+    // Fetch remaining
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.desc&limit=20`, { headers });
+    const data = await r.json();
+    renderComments(data);
+  } catch(e) { console.error(e); }
+}
+
+function renderComments(comments) {
+  const list = document.getElementById('comments-list');
+  if (!comments || comments.length === 0) {
+    list.innerHTML = '<div class="empty-comments">Nenhum aviso ainda. Seja o primeiro!</div>';
+    return;
+  }
+
+  list.innerHTML = comments.map(c => {
+    const lifetimeMs = COMMENT_LIFETIME_HOURS * 3600000;
+    const age = Date.now() - new Date(c.created_at).getTime();
+    const pct = Math.max(0, Math.min(100, 100 - (age / lifetimeMs) * 100));
+    const isAdmin = c.is_admin;
+    return `
+      <div class="comment-item ${isAdmin ? 'admin-comment' : ''}">
+        <div class="comment-avatar ${isAdmin ? 'admin' : ''}">${isAdmin ? '★' : '👤'}</div>
+        <div class="comment-content">
+          <div class="comment-meta">
+            <span class="comment-author ${isAdmin ? 'admin' : ''}">${isAdmin ? 'Admin' : 'Usuário'}</span>
+            ${isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
+            <span class="comment-time">${timeAgo(c.created_at)}</span>
+          </div>
+          <div class="comment-text">${escapeHtml(c.text)}</div>
+          <div class="expires-bar"><div class="expires-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function postComment() {
+  const input = document.getElementById('comment-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.disabled = true;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ text, is_admin: false })
+    });
+    input.value = '';
+    await loadComments();
+  } catch(e) { alert('Erro ao enviar aviso.'); }
+  input.disabled = false;
+}
+
+// ── LINKS from Supabase ──
+async function loadLinks() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`, { headers });
+    const data = await r.json();
+    if (!data || data.length === 0) return;
+    const ids = ['link-wpp1','link-wpp2','link-wpp3','link-inst'];
+    data.forEach((link, i) => {
+      const el = document.getElementById(ids[i]);
+      if (el) {
+        el.href = link.url || '#';
+        el.querySelector('span:not(.link-arrow)').textContent = link.name || el.querySelector('span').textContent;
+        el.target = '_blank';
+        el.rel = 'noopener noreferrer';
+      }
+    });
+  } catch(e) { console.error(e); }
+}
+
+// ── INIT ──
+async function init() {
+  await Promise.all([loadStatus(), loadComments(), loadLinks()]);
+  updateTracker();
+  renderSchedule();
+  // Refresh tracker every minute
+  setInterval(updateTracker, 60000);
+  // Refresh comments every 2 minutes
+  setInterval(loadComments, 120000);
+}
+
+init();
+</script>
+</body>
+</html>
