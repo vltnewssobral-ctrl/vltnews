@@ -43,6 +43,10 @@
     .stat-value { font-family: 'Roboto Mono', monospace; font-size: 1.8rem; font-weight: 700; color: var(--green2); }
     .stat-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
 
+    /* AJUSTE: seleção de linha para status */
+    .status-line-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .status-line-tab { flex: 1; padding: 10px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: center; transition: all .2s; }
+    .status-line-tab.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.1); }
     .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
     .status-opt { display: flex; align-items: center; gap: 10px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all .2s; background: var(--panel); }
     .status-opt.selected { border-color: var(--green2); background: rgba(26,122,60,.15); }
@@ -142,15 +146,20 @@
       <div class="card-body">
         <div class="stats-grid">
           <div class="stat-box"><div class="stat-value" id="stat-comments">—</div><div class="stat-label">Avisos ativos</div></div>
-          <div class="stat-box"><div class="stat-value" id="stat-status-val">—</div><div class="stat-label">Status atual</div></div>
+          <div class="stat-box"><div class="stat-value" id="stat-status-val">—</div><div class="stat-label">Status Geral</div></div>
           <div class="stat-box"><div class="stat-value" id="stat-time">—</div><div class="stat-label">Hora local</div></div>
         </div>
       </div>
     </div>
 
+    <!-- AJUSTE: Status por linha -->
     <div class="card">
       <div class="card-header"><span>🟢</span><h2>Status do VLT</h2></div>
       <div class="card-body">
+        <div class="status-line-tabs">
+          <div class="status-line-tab active" onclick="selectStatusLine('sul', this)">🟢 VLT Sul</div>
+          <div class="status-line-tab" onclick="selectStatusLine('norte', this)">🔵 VLT Norte</div>
+        </div>
         <div class="current-status-bar">
           <div id="current-status-dot"></div>
           <span id="current-status-text">Carregando...</span>
@@ -240,7 +249,6 @@ const STATUS_MAP = {
   black:  { color: '#555',    label: 'Fora de operação' }
 };
 
-// Horários padrão atualizados do PDF Metrofor
 const DEFAULT_SCHEDULES = {
   sul: {
     stations: ['COHAB II','Dom Expedito','Blvd Duarte','C. dos Velhos','Dom José','Sumaré'],
@@ -348,6 +356,8 @@ const DEFAULT_SCHEDULES = {
 };
 
 let selectedStatus  = 'green';
+let activeStatusLine = 'sul';
+let statusData = { sul: 'green', norte: 'green' }; // armazena status de cada linha
 let linksData       = [];
 let schedules       = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES));
 let activeSchedLine = 'sul';
@@ -385,32 +395,68 @@ function updateClock() {
     now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
-// ── STATUS ──
+// ── STATUS (por linha) ──
 async function loadStatus() {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers: SB });
-  const d = await r.json();
-  if (d && d[0]) applyStatus(d[0].color);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/status`, { headers: SB });
+    const data = await r.json();
+    if (data && data.length > 0) {
+      // Procura status por linha
+      data.forEach(item => {
+        if (item.line === 'sul') statusData.sul = item.color;
+        if (item.line === 'norte') statusData.norte = item.color;
+      });
+    }
+  } catch(e) {}
+  applyStatusToUI();
 }
-function applyStatus(color) {
-  const s = STATUS_MAP[color] || STATUS_MAP.green;
-  selectedStatus = color;
+
+function applyStatusToUI() {
+  const currentColor = statusData[activeStatusLine] || 'green';
+  const s = STATUS_MAP[currentColor];
+  selectedStatus = currentColor;
   document.getElementById('current-status-dot').style.cssText = `width:12px;height:12px;border-radius:50%;background:${s.color}`;
-  document.getElementById('current-status-text').textContent = `Status atual: ${s.label}`;
-  document.getElementById('stat-status-val').textContent = ['🟢','🟡','🔴','⚫'][['green','yellow','red','black'].indexOf(color)] || '🟢';
-  document.querySelectorAll('.status-opt').forEach(el => el.classList.toggle('selected', el.dataset.color === color));
+  document.getElementById('current-status-text').textContent = `Status atual (${activeStatusLine === 'sul' ? 'Linha Sul' : 'Linha Norte'}): ${s.label}`;
+  // Atualiza visão geral com ícone combinado (exibe status da linha ativa como referência)
+  document.getElementById('stat-status-val').textContent = `${activeStatusLine === 'sul' ? '🟢' : '🔵'} ${s.label.substring(0,10)}`;
+  // Marca opção selecionada
+  document.querySelectorAll('.status-opt').forEach(el => el.classList.toggle('selected', el.dataset.color === currentColor));
 }
+
+function selectStatusLine(line, el) {
+  activeStatusLine = line;
+  document.querySelectorAll('.status-line-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  applyStatusToUI();
+}
+
 function selectStatus(el) {
   document.querySelectorAll('.status-opt').forEach(e => e.classList.remove('selected'));
   el.classList.add('selected');
   selectedStatus = el.dataset.color;
 }
+
 async function saveStatus() {
-  await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, {
-    method: 'PATCH', headers: SB,
-    body: JSON.stringify({ color: selectedStatus, updated_at: new Date().toISOString() })
-  });
-  applyStatus(selectedStatus);
-  showToast('Status atualizado!');
+  const line = activeStatusLine;
+  const color = selectedStatus;
+  // Upsert no Supabase (supondo tabela status com chave composta id+line, ou linha única)
+  // Verifica se existe registro para essa linha
+  const check = await fetch(`${SUPABASE_URL}/rest/v1/status?line=eq.${line}`, { headers: SB });
+  const existing = await check.json();
+  if (existing && existing.length > 0) {
+    await fetch(`${SUPABASE_URL}/rest/v1/status?line=eq.${line}`, {
+      method: 'PATCH', headers: SB,
+      body: JSON.stringify({ color, updated_at: new Date().toISOString() })
+    });
+  } else {
+    await fetch(`${SUPABASE_URL}/rest/v1/status`, {
+      method: 'POST', headers: SB,
+      body: JSON.stringify({ line, color, updated_at: new Date().toISOString() })
+    });
+  }
+  statusData[line] = color;
+  applyStatusToUI();
+  showToast(`Status da ${line === 'sul' ? 'Linha Sul' : 'Linha Norte'} atualizado!`);
 }
 
 // ── LINKS ──
