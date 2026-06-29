@@ -7,275 +7,152 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --green:   #1a7a3c;
-      --green2:  #23a455;
-      --dark:    #0d0d0d;
-      --panel:   #141414;
-      --card:    #1a1a1a;
-      --border:  #2a2a2a;
-      --text:    #e8e8e8;
-      --muted:   #888;
-      --yellow:  #f5c842;
-      --red:     #e03c3c;
-      --amber:   #f0922b;
-      --track:   #2a2a2a;
+      --green:  #1a7a3c;
+      --green2: #23a455;
+      --dark:   #0d0d0d;
+      --panel:  #141414;
+      --card:   #1a1a1a;
+      --border: #2a2a2a;
+      --text:   #e8e8e8;
+      --muted:  #888;
+      --yellow: #f5c842;
+      --red:    #e03c3c;
+      --amber:  #f0922b;
+      --track:  #2a2a2a;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--dark);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-    }
+    body { background: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
 
     header {
       background: var(--panel);
       border-bottom: 2px solid var(--green);
       padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      display: flex; align-items: center; gap: 16px;
     }
-
     .logo-icon { width: 48px; height: 48px; flex-shrink: 0; }
-
     .logo-text { display: flex; flex-direction: column; }
-    .logo-text span:first-child {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2rem;
-      letter-spacing: 3px;
-      color: var(--green2);
-      line-height: 1;
-    }
-    .logo-text span:last-child {
-      font-size: 0.7rem;
-      color: var(--muted);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
+    .logo-text span:first-child { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--green2); line-height: 1; }
+    .logo-text span:last-child  { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
 
     .header-status {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 14px;
-      transition: border-color .2s;
+      margin-left: auto; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 14px; transition: border-color .2s;
     }
     .header-status:hover { border-color: var(--green); }
-
-    #status-dot {
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      background: #1a7a3c;
-      box-shadow: 0 0 8px currentColor;
-      flex-shrink: 0;
-    }
+    #status-dot { width: 14px; height: 14px; border-radius: 50%; background: #1a7a3c; box-shadow: 0 0 8px #1a7a3c; flex-shrink: 0; }
     #status-label { font-size: 0.8rem; font-weight: 600; letter-spacing: .5px; }
 
-    main {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 24px 16px 60px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    main { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; display: flex; flex-direction: column; gap: 20px; }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
     .card-header {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      background: var(--panel); border-bottom: 1px solid var(--border);
+      padding: 12px 18px; display: flex; align-items: center; gap: 10px;
     }
-    .card-header h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.1rem;
-      letter-spacing: 2px;
-      color: var(--green2);
-    }
-    .card-header .badge {
-      font-size: 0.65rem;
-      background: var(--green);
-      color: #fff;
-      padding: 2px 8px;
-      border-radius: 20px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-left: auto;
-    }
+    .card-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; color: var(--green2); }
+    .card-header .badge { font-size: 0.65rem; background: var(--green); color: #fff; padding: 2px 8px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase; margin-left: auto; }
 
-    /* TRACKER */
+    /* ── TRACKER ── */
     .tracker-body { padding: 20px 18px; }
 
     .line-selector { display: flex; gap: 8px; margin-bottom: 20px; }
-
     .line-btn {
-      flex: 1;
-      padding: 8px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--panel);
-      color: var(--muted);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .2s;
-      text-align: center;
+      flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--panel); color: var(--muted); font-family: 'Inter', sans-serif;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all .2s; text-align: center;
     }
-    .line-btn.active {
-      border-color: var(--green);
-      color: var(--green2);
-      background: rgba(26,122,60,.12);
+    .line-btn.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.12); }
+
+    /* Track */
+    .track-outer {
+      position: relative;
+      margin: 40px 0 44px; /* room above for icon, below for labels */
     }
-
-    .track-label {
-      font-size: 0.7rem; color: var(--muted);
-      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
-    }
-
-    .progress-wrap { position: relative; padding: 28px 0 12px; }
-
-    .stations-row {
-      display: flex; justify-content: space-between; position: relative;
-    }
-
-    .track-line {
-      position: absolute; top: 50%; left: 0; right: 0;
+    .track-rail {
+      position: absolute; top: 7px; left: 0; right: 0;
       height: 4px; background: var(--track); border-radius: 2px;
-      transform: translateY(-50%); z-index: 0;
     }
     .track-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--green), var(--green2));
       border-radius: 2px; transition: width .8s ease;
     }
-
-    .station-dot {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-    }
-
-    .dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      background: var(--track); border: 2px solid var(--border); transition: all .4s;
-    }
-    .dot.passed { background: var(--green); border-color: var(--green2); }
-    .dot.current {
-      background: var(--yellow); border-color: #fff;
-      box-shadow: 0 0 10px var(--yellow);
-      animation: pulse 1.2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 6px var(--yellow); }
-      50%       { box-shadow: 0 0 18px var(--yellow); }
-    }
-
-    .station-name {
-      font-size: 0.6rem; color: var(--muted); text-align: center;
-      max-width: 52px; line-height: 1.3; margin-top: 6px;
-    }
-    .station-name.current-label { color: var(--yellow); font-weight: 700; }
-
     .vlt-icon {
-      position: absolute; top: -18px; transform: translateX(-50%);
-      font-size: 1.4rem; transition: left .8s ease; z-index: 2;
+      position: absolute;
+      top: -22px;
+      font-size: 1.4rem;
+      transform: translateX(-50%);
+      transition: left .8s ease;
+      z-index: 2;
+      line-height: 1;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,.6));
     }
+    .stations-row {
+      display: flex; justify-content: space-between; position: relative;
+    }
+    .station-dot { display: flex; flex-direction: column; align-items: center; position: relative; }
+    .dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--track); border: 2px solid var(--border);
+      transition: all .4s; position: relative; z-index: 1;
+    }
+    .dot.passed  { background: var(--green); border-color: var(--green2); }
+    .dot.current { background: var(--yellow); border-color: #fff; animation: pulse 1.2s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 6px var(--yellow); }
+      50%      { box-shadow: 0 0 18px var(--yellow); }
+    }
+    .station-name {
+      position: absolute; top: 20px;
+      font-size: 0.58rem; color: var(--muted); text-align: center;
+      width: 54px; left: 50%; transform: translateX(-50%);
+      line-height: 1.3;
+    }
+    .station-name.cur { color: var(--yellow); font-weight: 700; }
 
-    .tracker-info {
-      margin-top: 20px; display: grid;
-      grid-template-columns: 1fr 1fr; gap: 10px;
+    .direction-label {
+      font-size: 0.7rem; color: var(--muted); text-align: center;
+      margin-top: 4px; letter-spacing: .5px;
     }
 
-    .info-box {
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 8px; padding: 12px;
-    }
+    .tracker-info { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .info-box { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
     .info-box .label { font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
     .info-box .value { font-family: 'Roboto Mono', monospace; font-size: 1rem; font-weight: 600; color: var(--green2); }
     .info-box .value.small { font-size: 0.85rem; }
 
-    .direction-toggle { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
-    .direction-toggle label { font-size: 0.75rem; color: var(--muted); }
-    .direction-toggle select {
-      background: var(--panel); border: 1px solid var(--border);
-      color: var(--text); padding: 6px 10px; border-radius: 6px;
-      font-size: 0.8rem; flex: 1; cursor: pointer;
-    }
-
     .no-trip { text-align: center; padding: 30px; color: var(--muted); font-size: 0.9rem; }
 
-    /* LINKS */
+    /* ── LINKS ── */
     .links-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-
     .link-btn {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px; border: 1px solid var(--border);
-      border-radius: 10px; background: var(--panel);
-      color: var(--text); text-decoration: none;
-      font-weight: 600; font-size: 0.9rem; transition: all .2s;
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border: 1px solid var(--border); border-radius: 10px; background: var(--panel);
+      color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all .2s;
     }
-    .link-btn:hover {
-      border-color: var(--green);
-      background: rgba(26,122,60,.1);
-      transform: translateX(4px);
-    }
-    .link-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
-    }
+    .link-btn:hover { border-color: var(--green); background: rgba(26,122,60,.1); transform: translateX(4px); }
+    .link-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
     .link-icon.inst { background: #4a1a3a; }
     .link-icon.wpp  { background: #1a4d2a; }
     .link-icon.chan { background: #1a2a4a; }
     .link-arrow { margin-left: auto; color: var(--muted); font-size: 0.8rem; }
 
-    /* COMMENTS */
+    /* ── MURAL ── */
     .comments-body { padding: 16px; }
     .comment-form { display: flex; gap: 8px; margin-bottom: 16px; }
     .comment-input {
       flex: 1; background: var(--panel); border: 1px solid var(--border);
       color: var(--text); padding: 10px 14px; border-radius: 8px;
-      font-size: 0.85rem; font-family: 'Inter', sans-serif;
-      resize: none; outline: none; transition: border-color .2s;
+      font-size: 0.85rem; font-family: 'Inter', sans-serif; resize: none; outline: none; transition: border-color .2s;
     }
     .comment-input:focus { border-color: var(--green); }
-    .comment-send {
-      background: var(--green); border: none; color: #fff;
-      padding: 10px 16px; border-radius: 8px; cursor: pointer;
-      font-weight: 700; font-size: 0.85rem; transition: background .2s; flex-shrink: 0;
-    }
+    .comment-send { background: var(--green); border: none; color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: background .2s; flex-shrink: 0; }
     .comment-send:hover { background: var(--green2); }
     .comments-list { display: flex; flex-direction: column; gap: 8px; }
-    .comment-item {
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 8px; padding: 12px 14px;
-      display: flex; gap: 10px; align-items: flex-start;
-    }
+    .comment-item { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
     .comment-item.admin-comment { border-color: var(--green); background: rgba(26,122,60,.08); }
-    .comment-avatar {
-      width: 28px; height: 28px; border-radius: 50%; background: var(--green);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
-    }
+    .comment-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
     .comment-avatar.admin { background: var(--yellow); color: #000; }
     .comment-content { flex: 1; }
     .comment-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
@@ -288,83 +165,43 @@
     .expires-fill { height: 100%; background: var(--green); border-radius: 1px; }
     .empty-comments { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; }
 
-    /* STATUS MODAL */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.7); z-index: 100;
-      align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 24px; width: 90%; max-width: 360px;
-    }
-    .modal h3 {
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
-      letter-spacing: 2px; color: var(--green2); margin-bottom: 16px;
-    }
-    .modal-input {
-      width: 100%; background: var(--panel); border: 1px solid var(--border);
-      color: var(--text); padding: 10px 14px; border-radius: 8px;
-      font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 14px;
-    }
-    .modal-input:focus { border-color: var(--green); }
-    .status-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-    .status-opt {
-      display: flex; align-items: center; gap: 8px; padding: 10px 12px;
-      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
-      font-size: 0.82rem; font-weight: 600; transition: all .2s; background: var(--panel);
-    }
-    .status-opt.selected { border-color: var(--green2); background: rgba(26,122,60,.15); }
-    .status-opt .sdot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-    .modal-actions { display: flex; gap: 8px; }
-    .btn-cancel {
-      flex: 1; padding: 10px; border: 1px solid var(--border);
-      border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.85rem;
-    }
-    .btn-save {
-      flex: 2; padding: 10px; border: none; border-radius: 8px;
-      background: var(--green); color: #fff; cursor: pointer;
-      font-weight: 700; font-size: 0.85rem; transition: background .2s;
-    }
-    .btn-save:hover { background: var(--green2); }
-    .modal-error { font-size: 0.78rem; color: var(--red); margin-bottom: 10px; display: none; }
-
-    /* HORÁRIOS */
+    /* ── HORÁRIOS ── */
     .schedule-body { padding: 16px; }
     .schedule-line-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-    .schedule-tab {
-      flex: 1; padding: 7px; background: var(--panel); border: 1px solid var(--border);
-      color: var(--muted); border-radius: 6px; font-size: 0.75rem; font-weight: 600;
-      cursor: pointer; text-align: center; transition: all .2s;
-    }
+    .schedule-tab { flex: 1; padding: 7px; background: var(--panel); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; text-align: center; transition: all .2s; }
     .schedule-tab.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.1); }
     .schedule-direction-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-    .dir-tab {
-      flex: 1; padding: 6px; background: var(--panel); border: 1px solid var(--border);
-      color: var(--muted); border-radius: 6px; font-size: 0.7rem; cursor: pointer;
-      text-align: center; transition: all .2s;
-    }
+    .dir-tab { flex: 1; padding: 6px; background: var(--panel); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; font-size: 0.7rem; cursor: pointer; text-align: center; transition: all .2s; }
     .dir-tab.active { border-color: var(--amber); color: var(--amber); }
     .schedule-table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; font-family: 'Roboto Mono', monospace; font-size: 0.72rem; }
-    thead th {
-      background: var(--panel); padding: 8px 6px; text-align: center;
-      color: var(--green2); font-size: 0.65rem; letter-spacing: .5px;
-      border-bottom: 1px solid var(--border); white-space: nowrap;
-    }
+    thead th { background: var(--panel); padding: 8px 6px; text-align: center; color: var(--green2); font-size: 0.65rem; letter-spacing: .5px; border-bottom: 1px solid var(--border); white-space: nowrap; }
     tbody tr:nth-child(even) { background: rgba(255,255,255,.02); }
     tbody td { padding: 7px 6px; text-align: center; color: var(--text); border-bottom: 1px solid rgba(255,255,255,.04); }
     tbody tr.current-trip td { background: rgba(26,122,60,.15); color: var(--green2); font-weight: 700; }
 
-    footer {
-      text-align: center; padding: 20px; color: var(--muted);
-      font-size: 0.7rem; border-top: 1px solid var(--border);
-    }
+    /* ── MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; width: 90%; max-width: 360px; }
+    .modal h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: var(--green2); margin-bottom: 16px; }
+    .modal-input { width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 14px; }
+    .modal-input:focus { border-color: var(--green); }
+    .status-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .status-opt { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: all .2s; background: var(--panel); }
+    .status-opt.selected { border-color: var(--green2); background: rgba(26,122,60,.15); }
+    .status-opt .sdot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .modal-actions { display: flex; gap: 8px; }
+    .btn-cancel { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.85rem; }
+    .btn-save { flex: 2; padding: 10px; border: none; border-radius: 8px; background: var(--green); color: #fff; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: background .2s; }
+    .btn-save:hover { background: var(--green2); }
+    .modal-error { font-size: 0.78rem; color: var(--red); margin-bottom: 10px; display: none; }
+
+    footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.7rem; border-top: 1px solid var(--border); }
 
     @media (max-width: 420px) {
       .logo-text span:first-child { font-size: 1.6rem; }
-      .station-name { font-size: 0.55rem; max-width: 40px; }
+      .station-name { font-size: 0.5rem; width: 42px; }
     }
   </style>
 </head>
@@ -404,28 +241,21 @@
     </div>
     <div class="tracker-body">
       <div class="line-selector">
-        <button class="line-btn active" onclick="selectLine('sul')">Linha Sul<br><small style="font-weight:400;color:var(--muted)">COHAB II ↔ Sumaré</small></button>
-        <button class="line-btn" onclick="selectLine('norte')">Linha Norte<br><small style="font-weight:400;color:var(--muted)">COHAB III ↔ N. Recanto</small></button>
+        <button class="line-btn active" onclick="selectTrackerLine('sul', this)">
+          🟢 VLT Sul<br><small style="font-weight:400;color:var(--muted)">COHAB II ↔ Sumaré</small>
+        </button>
+        <button class="line-btn" onclick="selectTrackerLine('norte', this)">
+          🔵 VLT Norte<br><small style="font-weight:400;color:var(--muted)">COHAB III ↔ N. Recanto</small>
+        </button>
       </div>
-      <div class="direction-toggle">
-        <label>Sentido:</label>
-        <select id="direction-select" onchange="updateTracker()">
-          <option value="0">COHAB II → Sumaré</option>
-          <option value="1">Sumaré → COHAB II</option>
-        </select>
-      </div>
-      <div class="progress-wrap" id="progress-wrap" style="margin-top:24px"></div>
-      <div class="tracker-info" id="tracker-info"></div>
+      <div id="tracker-content"></div>
     </div>
   </div>
 
   <!-- LINKS -->
   <div class="card">
-    <div class="card-header">
-      <span>🔗</span>
-      <h2>Links</h2>
-    </div>
-    <div class="links-body" id="links-body">
+    <div class="card-header"><span>🔗</span><h2>Links</h2></div>
+    <div class="links-body">
       <a href="#" class="link-btn" id="link-inst" target="_blank" rel="noopener noreferrer">
         <div class="link-icon inst">📸</div>
         <span id="link-inst-name">Instagram</span>
@@ -447,8 +277,7 @@
   <!-- MURAL -->
   <div class="card">
     <div class="card-header">
-      <span>📢</span>
-      <h2>Mural de Avisos</h2>
+      <span>📢</span><h2>Mural de Avisos</h2>
       <span class="badge">SOME EM 24H</span>
     </div>
     <div class="comments-body">
@@ -464,14 +293,11 @@
 
   <!-- HORÁRIOS -->
   <div class="card">
-    <div class="card-header">
-      <span>🕐</span>
-      <h2>Horários</h2>
-    </div>
+    <div class="card-header"><span>🕐</span><h2>Horários</h2></div>
     <div class="schedule-body">
       <div class="schedule-line-tabs">
-        <div class="schedule-tab active" onclick="selectScheduleLine('sul', this)">Linha Sul</div>
-        <div class="schedule-tab" onclick="selectScheduleLine('norte', this)">Linha Norte</div>
+        <div class="schedule-tab active" onclick="selectScheduleLine('sul', this)">VLT Sul</div>
+        <div class="schedule-tab" onclick="selectScheduleLine('norte', this)">VLT Norte</div>
       </div>
       <div class="schedule-direction-tabs">
         <div class="dir-tab active" id="sched-dir-0" onclick="selectScheduleDir(0)">↗ Ida</div>
@@ -497,50 +323,45 @@
     <input class="modal-input" id="status-password" type="password" placeholder="Senha de admin" />
     <div class="modal-error" id="modal-error">Senha incorreta.</div>
     <div class="status-options">
-      <div class="status-opt selected" data-color="green" onclick="selectStatus(this)">
-        <div class="sdot" style="background:#1a7a3c"></div> No horário
-      </div>
-      <div class="status-opt" data-color="yellow" onclick="selectStatus(this)">
-        <div class="sdot" style="background:#f5c842"></div> Leve atraso
-      </div>
-      <div class="status-opt" data-color="red" onclick="selectStatus(this)">
-        <div class="sdot" style="background:#e03c3c"></div> Muito atrasado
-      </div>
-      <div class="status-opt" data-color="black" onclick="selectStatus(this)">
-        <div class="sdot" style="background:#555"></div> Fora de operação
-      </div>
+      <div class="status-opt selected" data-color="green"  onclick="selectStatus(this)"><div class="sdot" style="background:#1a7a3c"></div> No horário</div>
+      <div class="status-opt"          data-color="yellow" onclick="selectStatus(this)"><div class="sdot" style="background:#f5c842"></div> Leve atraso</div>
+      <div class="status-opt"          data-color="red"    onclick="selectStatus(this)"><div class="sdot" style="background:#e03c3c"></div> Muito atrasado</div>
+      <div class="status-opt"          data-color="black"  onclick="selectStatus(this)"><div class="sdot" style="background:#555"></div> Fora de operação</div>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeStatusModal()">Cancelar</button>
-      <button class="btn-save" onclick="saveStatus()">Salvar</button>
+      <button class="btn-save"   onclick="saveStatus()">Salvar</button>
     </div>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_hv_CGrOu6sRCyAveyzN6TA_ckEZRuCm';
+const SUPABASE_URL  = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_hv_CGrOu6sRCyAveyzN6TA_ckEZRuCm';
 const ADMIN_PASSWORD = 'batata';
 const COMMENT_LIFETIME_HOURS = 24;
 
-const headers = {
+const SB = {
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`,
   'Content-Type': 'application/json',
   'Prefer': 'return=representation'
 };
 
-// Horários padrão (usados se não houver dados no Supabase)
-const DEFAULT_SCHEDULES = {
+// ── HORÁRIOS (do PDF oficial Metrofor) ──────────────────────────────────────
+const SCHEDULES = {
   sul: {
-    stations: ['COHAB II','Dom Expedito','B. do Arco','C. dos Velhos','Dom José','Sumaré'],
+    // Estações na ordem COHAB II → Sumaré (ida)
+    stations: ['COHAB II','Dom Expedito','Blvd Duarte','C. dos Velhos','Dom José','Sumaré'],
+    // directions[0] = COHAB II → Sumaré (ida)
+    // directions[1] = Sumaré → COHAB II (volta)
     directions: [
       [
-        ['5:52','5:54','5:57','6:02','6:06','6:12'],
-        ['6:40','6:42','6:45','6:50','6:54','7:00'],
-        ['7:28','7:30','7:33','7:38','7:42','7:48'],
-        ['8:16','8:18','8:21','8:26','8:30','8:36'],
-        ['9:19','9:21','9:24','9:29','9:33','9:39'],
+        ['05:52','05:54','05:57','06:02','06:06','06:12'],
+        ['06:40','06:42','06:45','06:50','06:54','07:00'],
+        ['07:28','07:30','07:33','07:38','07:42','07:48'],
+        ['08:16','08:18','08:21','08:26','08:30','08:36'],
+        ['09:19','09:21','09:24','09:29','09:33','09:39'],
         ['10:07','10:09','10:12','10:17','10:21','10:27'],
         ['10:55','10:57','11:00','11:05','11:09','11:15'],
         ['11:43','11:45','11:48','11:53','11:57','12:03'],
@@ -559,12 +380,12 @@ const DEFAULT_SCHEDULES = {
         ['22:37','22:39','22:42','22:47','22:51','22:57'],
       ],
       [
-        ['5:30','5:35','5:40','5:43','5:46','5:49'],
-        ['6:18','6:23','6:28','6:31','6:34','6:37'],
-        ['7:06','7:11','7:16','7:19','7:22','7:25'],
-        ['7:54','7:59','8:04','8:07','8:10','8:13'],
-        ['8:57','9:02','9:07','9:10','9:13','9:16'],
-        ['9:45','9:50','9:55','9:58','10:01','10:04'],
+        ['05:30','05:35','05:40','05:43','05:46','05:49'],
+        ['06:18','06:23','06:28','06:31','06:34','06:37'],
+        ['07:06','07:11','07:16','07:19','07:22','07:25'],
+        ['07:54','07:59','08:04','08:07','08:10','08:13'],
+        ['08:57','09:02','09:07','09:10','09:13','09:16'],
+        ['09:45','09:50','09:55','09:58','10:01','10:04'],
         ['10:33','10:38','10:43','10:46','10:49','10:52'],
         ['11:21','11:26','11:31','11:34','11:37','11:40'],
         ['12:09','12:14','12:19','12:22','12:25','12:28'],
@@ -584,15 +405,16 @@ const DEFAULT_SCHEDULES = {
     ]
   },
   norte: {
-    stations: ['COHAB III','José Euclides','Junco','C. dos Velhos','A. da Brasília','Grendene','N. Recanto'],
+    // Estações na ordem COHAB III → Novo Recanto (ida)
+    stations: ['COHAB III','J. Euclides','Junco','C. dos Velhos','A. Brasília','Grendene','N. Recanto'],
     directions: [
       [
-        ['5:27','5:30','5:33','5:40','5:44','5:47','5:49'],
-        ['6:15','6:18','6:21','6:28','6:32','6:35','6:37'],
-        ['7:03','7:06','7:09','7:16','7:20','7:23','7:25'],
-        ['7:51','7:54','7:57','8:04','8:08','8:11','8:13'],
-        ['8:54','8:57','9:00','9:07','9:11','9:14','9:16'],
-        ['9:42','9:45','9:48','9:55','9:59','10:02','10:04'],
+        ['05:27','05:30','05:33','05:40','05:44','05:47','05:49'],
+        ['06:15','06:18','06:21','06:28','06:32','06:35','06:37'],
+        ['07:03','07:06','07:09','07:16','07:20','07:23','07:25'],
+        ['07:51','07:54','07:57','08:04','08:08','08:11','08:13'],
+        ['08:54','08:57','09:00','09:07','09:11','09:14','09:16'],
+        ['09:42','09:45','09:48','09:55','09:59','10:02','10:04'],
         ['10:30','10:33','10:36','10:43','10:47','10:50','10:52'],
         ['11:18','11:21','11:24','11:31','11:35','11:38','11:40'],
         ['12:06','12:09','12:12','12:19','12:23','12:26','12:28'],
@@ -611,11 +433,11 @@ const DEFAULT_SCHEDULES = {
         ['23:00','23:03','23:06','23:13','23:17','23:20','23:22'],
       ],
       [
-        ['5:51','5:53','5:56','6:02','6:07','6:10','6:13'],
-        ['6:39','6:41','6:44','6:50','6:55','6:58','7:01'],
-        ['7:27','7:29','7:32','7:38','7:43','7:46','7:49'],
-        ['8:15','8:17','8:20','8:26','8:31','8:34','8:37'],
-        ['9:18','9:20','9:23','9:29','9:34','9:37','9:40'],
+        ['05:51','05:53','05:56','06:02','06:07','06:10','06:13'],
+        ['06:39','06:41','06:44','06:50','06:55','06:58','07:01'],
+        ['07:27','07:29','07:32','07:38','07:43','07:46','07:49'],
+        ['08:15','08:17','08:20','08:26','08:31','08:34','08:37'],
+        ['09:18','09:20','09:23','09:29','09:34','09:37','09:40'],
         ['10:06','10:08','10:11','10:17','10:22','10:25','10:28'],
         ['10:54','10:56','10:59','11:05','11:10','11:13','11:16'],
         ['11:42','11:44','11:47','11:53','11:58','12:01','12:04'],
@@ -637,76 +459,199 @@ const DEFAULT_SCHEDULES = {
   }
 };
 
-// Schedules ativos (podem ser sobrescritos pelo Supabase)
-let SCHEDULES = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES));
-
-let currentLine = 'sul';
-let currentDirection = 0;
+// ── Estado ───────────────────────────────────────────────────────────────────
+let trackerLine  = 'sul';
 let selectedStatus = 'green';
 let schedLine = 'sul';
-let schedDir = 0;
+let schedDir  = 0;
 
-function timeToMinutes(t) {
-  const [h, m] = t.split(':').map(Number);
-  return h * 60 + m;
-}
-
-function nowMinutes() {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
-}
-
+// ── Utilitários ──────────────────────────────────────────────────────────────
+function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
+function nowMin() { const n = new Date(); return n.getHours()*60+n.getMinutes(); }
 function timeAgo(iso) {
-  const diff = Math.floor((Date.now() - new Date(iso)) / 60000);
-  if (diff < 1)  return 'agora mesmo';
-  if (diff < 60) return `${diff} min atrás`;
-  const h = Math.floor(diff / 60);
-  return `${h}h atrás`;
+  const d = Math.floor((Date.now()-new Date(iso))/60000);
+  if (d<1)  return 'agora mesmo';
+  if (d<60) return `${d} min atrás`;
+  return `${Math.floor(d/60)}h atrás`;
+}
+function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Rastreador ───────────────────────────────────────────────────────────────
+// Encontra a viagem ativa (qualquer direção) e retorna {dir, tripIdx, pct, curSt, nextTime, trip, stations}
+function findActiveTrip(line) {
+  const data = SCHEDULES[line];
+  const now  = nowMin();
+
+  for (let dir = 0; dir < 2; dir++) {
+    const trips    = data.directions[dir];
+    const stations = dir === 0 ? data.stations : [...data.stations].reverse();
+
+    for (let t = 0; t < trips.length; t++) {
+      const trip  = trips[t];
+      const start = toMin(trip[0]);
+      const end   = toMin(trip[trip.length-1]);
+
+      if (now >= start && now <= end) {
+        // VLT em viagem nesta direção
+        let pct = 0, curSt = 0, nextTime = trip[1];
+        for (let s = 0; s < trip.length-1; s++) {
+          const a = toMin(trip[s]), b = toMin(trip[s+1]);
+          if (now >= a && now <= b) {
+            curSt    = s;
+            pct      = (s + (now-a)/(b-a)) / (trip.length-1);
+            nextTime = trip[s+1];
+            break;
+          }
+        }
+        return { dir, tripIdx: t, pct, curSt, nextTime, trip, stations, inTrip: true };
+      }
+    }
+  }
+
+  // Nenhuma viagem ativa — próxima saída (direção 0)
+  const trips    = data.directions[0];
+  const stations = data.stations;
+  const now2     = nowMin();
+  for (let t = 0; t < trips.length; t++) {
+    if (toMin(trips[t][0]) > now2) {
+      return { dir: 0, tripIdx: t, pct: 0, curSt: -1, nextTime: trips[t][0], trip: trips[t], stations, inTrip: false };
+    }
+  }
+  return null;
 }
 
+function selectTrackerLine(line, btn) {
+  trackerLine = line;
+  document.querySelectorAll('.line-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTracker();
+}
+
+function renderTracker() {
+  const content = document.getElementById('tracker-content');
+  const result  = findActiveTrip(trackerLine);
+
+  if (!result) {
+    content.innerHTML = `<div class="no-trip">🌙 Sem viagens no momento.</div>`;
+    return;
+  }
+
+  const { dir, pct, curSt, nextTime, trip, stations, inTrip } = result;
+  const n   = stations.length;
+  const now = nowMin();
+
+  // Dots
+  const dotsHTML = stations.map((name, i) => {
+    const stMin = toMin(trip[i]);
+    let cls = '';
+    if (inTrip && now > stMin && i < curSt+1) cls = 'passed';
+    if (inTrip && i === curSt) cls = 'current';
+    return `<div class="station-dot">
+      <div class="dot ${cls}"></div>
+      <span class="station-name ${cls==='current'?'cur':''}">${name}</span>
+    </div>`;
+  }).join('');
+
+  const dirLabel = dir === 0
+    ? `${stations[0]} → ${stations[n-1]}`
+    : `${stations[0]} → ${stations[n-1]}`;
+
+  content.innerHTML = `
+    <p class="direction-label">Sentido: ${dirLabel}</p>
+    <div class="track-outer">
+      <div class="track-rail"><div class="track-fill" style="width:${pct*100}%"></div></div>
+      <div class="vlt-icon" style="left:${pct*100}%">🚃</div>
+      <div class="stations-row">${dotsHTML}</div>
+    </div>
+    <div class="tracker-info">
+      <div class="info-box">
+        <div class="label">Situação</div>
+        <div class="value small">${inTrip ? '🟢 Em viagem' : '🟡 Próxima saída'}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">${inTrip ? 'Próxima parada' : 'Partida em'}</div>
+        <div class="value">${nextTime || '—'}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Partida</div>
+        <div class="value">${trip[0]}</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Chegada</div>
+        <div class="value">${trip[n-1]}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Horários ─────────────────────────────────────────────────────────────────
+function selectScheduleLine(line, el) {
+  schedLine = line;
+  document.querySelectorAll('.schedule-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderSchedule();
+}
+function selectScheduleDir(dir) {
+  schedDir = dir;
+  document.getElementById('sched-dir-0').classList.toggle('active', dir===0);
+  document.getElementById('sched-dir-1').classList.toggle('active', dir===1);
+  renderSchedule();
+}
+function renderSchedule() {
+  const data     = SCHEDULES[schedLine];
+  const stations = schedDir === 0 ? data.stations : [...data.stations].reverse();
+  const trips    = data.directions[schedDir];
+  const now      = nowMin();
+
+  let curTrip = -1;
+  for (let t=0; t<trips.length; t++) {
+    const s = toMin(trips[t][0]), e = toMin(trips[t][trips[t].length-1]);
+    if (now>=s && now<=e) { curTrip=t; break; }
+    if (now<s)            { curTrip=t; break; }
+  }
+
+  document.getElementById('schedule-thead').innerHTML =
+    `<tr>${stations.map(s=>`<th>${s}</th>`).join('')}</tr>`;
+
+  document.getElementById('schedule-tbody').innerHTML = trips.map((trip,i)=>{
+    const cells = schedDir===0 ? trip : [...trip].reverse();
+    return `<tr class="${i===curTrip?'current-trip':''}">${cells.map(t=>`<td>${t}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+// ── Status ───────────────────────────────────────────────────────────────────
 const STATUS_MAP = {
   green:  { color: '#1a7a3c', label: 'No horário' },
   yellow: { color: '#f5c842', label: 'Leve atraso' },
   red:    { color: '#e03c3c', label: 'Muito atrasado' },
   black:  { color: '#555',    label: 'Fora de operação' }
 };
-
 async function loadStatus() {
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers: SB });
     const d = await r.json();
     if (d && d[0]) applyStatus(d[0].color);
   } catch(e) { applyStatus('green'); }
 }
-
 function applyStatus(color) {
   const s = STATUS_MAP[color] || STATUS_MAP.green;
-  document.getElementById('status-dot').style.cssText = `background:${s.color};box-shadow:0 0 8px ${s.color}`;
+  document.getElementById('status-dot').style.cssText = `background:${s.color};box-shadow:0 0 8px ${s.color};width:14px;height:14px;border-radius:50%;flex-shrink:0`;
   document.getElementById('status-label').textContent = s.label;
 }
-
-function openStatusModal() {
-  document.getElementById('status-modal').classList.add('open');
-  document.getElementById('status-password').value = '';
-  document.getElementById('modal-error').style.display = 'none';
-}
+function openStatusModal()  { document.getElementById('status-modal').classList.add('open'); document.getElementById('status-password').value=''; document.getElementById('modal-error').style.display='none'; }
 function closeStatusModal() { document.getElementById('status-modal').classList.remove('open'); }
-
 function selectStatus(el) {
-  document.querySelectorAll('.status-opt').forEach(e => e.classList.remove('selected'));
+  document.querySelectorAll('.status-opt').forEach(e=>e.classList.remove('selected'));
   el.classList.add('selected');
   selectedStatus = el.dataset.color;
 }
-
 async function saveStatus() {
-  const pwd = document.getElementById('status-password').value;
-  if (pwd !== ADMIN_PASSWORD) {
-    document.getElementById('modal-error').style.display = 'block';
-    return;
+  if (document.getElementById('status-password').value !== ADMIN_PASSWORD) {
+    document.getElementById('modal-error').style.display='block'; return;
   }
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, {
-      method: 'PATCH', headers,
+      method:'PATCH', headers: SB,
       body: JSON.stringify({ color: selectedStatus, updated_at: new Date().toISOString() })
     });
     applyStatus(selectedStatus);
@@ -714,247 +659,80 @@ async function saveStatus() {
   } catch(e) { alert('Erro ao salvar status.'); }
 }
 
-// Carrega horários do Supabase (se existirem)
-async function loadSchedules() {
-  try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, { headers });
-    const d = await r.json();
-    if (d && d[0] && d[0].data) {
-      SCHEDULES = d[0].data;
-    }
-  } catch(e) { /* usa DEFAULT_SCHEDULES */ }
-}
-
-function selectLine(line) {
-  currentLine = line;
-  document.querySelectorAll('.line-btn').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && line === 'sul') || (i === 1 && line === 'norte'));
-  });
-  const sel = document.getElementById('direction-select');
-  if (line === 'sul') {
-    sel.options[0].text = 'COHAB II → Sumaré';
-    sel.options[1].text = 'Sumaré → COHAB II';
-  } else {
-    sel.options[0].text = 'COHAB III → Novo Recanto';
-    sel.options[1].text = 'Novo Recanto → COHAB III';
-  }
-  currentDirection = 0;
-  sel.value = '0';
-  updateTracker();
-}
-
-function updateTracker() {
-  currentDirection = parseInt(document.getElementById('direction-select').value);
-  const data = SCHEDULES[currentLine];
-  const stations = currentDirection === 0 ? data.stations : [...data.stations].reverse();
-  const trips = data.directions[currentDirection];
-  const now = nowMinutes();
-
-  let tripIdx = -1, progress = 0, currentStationIdx = 0, nextTime = null;
-
-  for (let t = 0; t < trips.length; t++) {
-    const trip = trips[t];
-    const start = timeToMinutes(trip[0]);
-    const end   = timeToMinutes(trip[trip.length - 1]);
-    if (now >= start && now <= end) {
-      tripIdx = t;
-      for (let s = 0; s < trip.length - 1; s++) {
-        const tA = timeToMinutes(trip[s]);
-        const tB = timeToMinutes(trip[s + 1]);
-        if (now >= tA && now <= tB) {
-          currentStationIdx = s;
-          const seg = tB - tA;
-          progress = ((now - tA) / seg) * (1 / (trip.length - 1)) + s / (trip.length - 1);
-          nextTime = trip[s + 1];
-          break;
-        }
-      }
-      break;
-    }
-    if (now < start) { tripIdx = t; progress = 0; currentStationIdx = 0; nextTime = trip[0]; break; }
-  }
-
-  const wrap = document.getElementById('progress-wrap');
-  const info = document.getElementById('tracker-info');
-
-  if (tripIdx === -1) {
-    wrap.innerHTML = `<div class="no-trip">🌙 Sem viagens no momento.<br>Primeira saída às <b>${trips[0][0]}</b></div>`;
-    info.innerHTML = '';
-    return;
-  }
-
-  const trip = trips[tripIdx];
-  const pct = Math.min(Math.max(progress, 0), 1);
-
-  let dotsHTML = stations.map((name, i) => {
-    const tripTime = currentDirection === 0 ? trip[i] : trip[stations.length - 1 - i];
-    const stMin = timeToMinutes(tripTime);
-    let cls = '';
-    if (tripIdx !== -1 && now > stMin) cls = 'passed';
-    if (i === currentStationIdx && now >= timeToMinutes(trip[0])) cls = 'current';
-    const labelCls = cls === 'current' ? 'current-label' : '';
-    return `<div class="station-dot">
-      <div class="dot ${cls}"></div>
-      <div class="station-name ${labelCls}">${name}</div>
-    </div>`;
-  }).join('');
-
-  wrap.innerHTML = `
-    <div style="position:relative">
-      <div class="vlt-icon" style="left:${pct*100}%">🚃</div>
-    </div>
-    <div class="stations-row">
-      <div class="track-line"><div class="track-fill" style="width:${pct*100}%"></div></div>
-      ${dotsHTML}
-    </div>
-  `;
-
-  const inProgress = now >= timeToMinutes(trip[0]) && now <= timeToMinutes(trip[trip.length-1]);
-  info.innerHTML = `
-    <div class="info-box">
-      <div class="label">Situação</div>
-      <div class="value small">${inProgress ? '🟢 Em viagem' : '🟡 Próxima saída'}</div>
-    </div>
-    <div class="info-box">
-      <div class="label">${inProgress ? 'Próxima parada' : 'Partida em'}</div>
-      <div class="value">${nextTime || '—'}</div>
-    </div>
-    <div class="info-box">
-      <div class="label">Partida</div>
-      <div class="value">${trip[0]}</div>
-    </div>
-    <div class="info-box">
-      <div class="label">Chegada</div>
-      <div class="value">${trip[trip.length-1]}</div>
-    </div>
-  `;
-}
-
-function selectScheduleLine(line, el) {
-  schedLine = line;
-  document.querySelectorAll('.schedule-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderSchedule();
-}
-
-function selectScheduleDir(dir) {
-  schedDir = dir;
-  document.getElementById('sched-dir-0').classList.toggle('active', dir === 0);
-  document.getElementById('sched-dir-1').classList.toggle('active', dir === 1);
-  renderSchedule();
-}
-
-function renderSchedule() {
-  const data = SCHEDULES[schedLine];
-  const stations = schedDir === 0 ? data.stations : [...data.stations].reverse();
-  const trips = data.directions[schedDir];
-  const now = nowMinutes();
-
-  let currentTripIdx = -1;
-  for (let t = 0; t < trips.length; t++) {
-    const start = timeToMinutes(trips[t][0]);
-    const end   = timeToMinutes(trips[t][trips[t].length - 1]);
-    if (now >= start && now <= end) { currentTripIdx = t; break; }
-    if (now < start) { currentTripIdx = t; break; }
-  }
-
-  document.getElementById('schedule-thead').innerHTML =
-    `<tr>${stations.map(s => `<th>${s}</th>`).join('')}</tr>`;
-
-  document.getElementById('schedule-tbody').innerHTML = trips.map((trip, i) => {
-    const cells = schedDir === 0 ? trip : [...trip].reverse();
-    const cls = i === currentTripIdx ? 'current-trip' : '';
-    return `<tr class="${cls}">${cells.map(t => `<td>${t}</td>`).join('')}</tr>`;
-  }).join('');
-}
-
+// ── Mural ────────────────────────────────────────────────────────────────────
 async function loadComments() {
   try {
-    const cutoff = new Date(Date.now() - COMMENT_LIFETIME_HOURS * 3600000).toISOString();
-    await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`, { method: 'DELETE', headers });
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.desc&limit=20`, { headers });
-    const data = await r.json();
-    renderComments(data);
+    const cutoff = new Date(Date.now()-COMMENT_LIFETIME_HOURS*3600000).toISOString();
+    await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`,{method:'DELETE',headers:SB});
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.desc&limit=20`,{headers:SB});
+    renderComments(await r.json());
   } catch(e) { console.error(e); }
 }
-
 function renderComments(comments) {
   const list = document.getElementById('comments-list');
-  if (!comments || comments.length === 0) {
-    list.innerHTML = '<div class="empty-comments">Nenhum aviso ainda. Seja o primeiro!</div>';
-    return;
+  if (!comments || comments.length===0) {
+    list.innerHTML='<div class="empty-comments">Nenhum aviso ainda. Seja o primeiro!</div>'; return;
   }
-  list.innerHTML = comments.map(c => {
-    const lifetimeMs = COMMENT_LIFETIME_HOURS * 3600000;
-    const age = Date.now() - new Date(c.created_at).getTime();
-    const pct = Math.max(0, Math.min(100, 100 - (age / lifetimeMs) * 100));
-    const isAdmin = c.is_admin;
-    return `
-      <div class="comment-item ${isAdmin ? 'admin-comment' : ''}">
-        <div class="comment-avatar ${isAdmin ? 'admin' : ''}">${isAdmin ? '★' : '👤'}</div>
-        <div class="comment-content">
-          <div class="comment-meta">
-            <span class="comment-author ${isAdmin ? 'admin' : ''}">${isAdmin ? 'Admin' : 'Usuário'}</span>
-            ${isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
-            <span class="comment-time">${timeAgo(c.created_at)}</span>
-          </div>
-          <div class="comment-text">${escapeHtml(c.text)}</div>
-          <div class="expires-bar"><div class="expires-fill" style="width:${pct}%"></div></div>
+  const lt = COMMENT_LIFETIME_HOURS*3600000;
+  list.innerHTML = comments.map(c=>{
+    const age = Date.now()-new Date(c.created_at).getTime();
+    const pct = Math.max(0,Math.min(100,100-(age/lt)*100));
+    return `<div class="comment-item ${c.is_admin?'admin-comment':''}">
+      <div class="comment-avatar ${c.is_admin?'admin':''}">${c.is_admin?'★':'👤'}</div>
+      <div class="comment-content">
+        <div class="comment-meta">
+          <span class="comment-author ${c.is_admin?'admin':''}">${c.is_admin?'Admin':'Usuário'}</span>
+          ${c.is_admin?'<span class="admin-badge">ADMIN</span>':''}
+          <span class="comment-time">${timeAgo(c.created_at)}</span>
         </div>
+        <div class="comment-text">${escapeHtml(c.text)}</div>
+        <div class="expires-bar"><div class="expires-fill" style="width:${pct}%"></div></div>
       </div>
-    `;
+    </div>`;
   }).join('');
 }
-
-function escapeHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 async function postComment() {
   const input = document.getElementById('comment-input');
-  const text = input.value.trim();
+  const text  = input.value.trim();
   if (!text) return;
   input.disabled = true;
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ text, is_admin: false })
-    });
-    input.value = '';
+    await fetch(`${SUPABASE_URL}/rest/v1/comments`,{method:'POST',headers:SB,body:JSON.stringify({text,is_admin:false})});
+    input.value='';
     await loadComments();
   } catch(e) { alert('Erro ao enviar aviso.'); }
   input.disabled = false;
 }
 
+// ── Links ────────────────────────────────────────────────────────────────────
 async function loadLinks() {
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`, { headers });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`,{headers:SB});
     const data = await r.json();
-    if (!data || data.length === 0) return;
-    // Ordem esperada: instagram, comunidade, canal
-    const slots = [
-      { el: 'link-inst',       nameEl: 'link-inst-name' },
-      { el: 'link-comunidade', nameEl: 'link-comunidade-name' },
-      { el: 'link-canal',      nameEl: 'link-canal-name' },
+    if (!data||data.length===0) return;
+    const slots=[
+      {el:'link-inst',nameEl:'link-inst-name'},
+      {el:'link-comunidade',nameEl:'link-comunidade-name'},
+      {el:'link-canal',nameEl:'link-canal-name'},
     ];
-    data.forEach((link, i) => {
-      if (!slots[i]) return;
-      const a = document.getElementById(slots[i].el);
-      const nameSpan = document.getElementById(slots[i].nameEl);
-      if (a) a.href = link.url || '#';
-      if (nameSpan) nameSpan.textContent = link.name || nameSpan.textContent;
+    data.forEach((link,i)=>{
+      if(!slots[i]) return;
+      const a=document.getElementById(slots[i].el);
+      const s=document.getElementById(slots[i].nameEl);
+      if(a) a.href=link.url||'#';
+      if(s) s.textContent=link.name||s.textContent;
     });
   } catch(e) { console.error(e); }
 }
 
+// ── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
-  await Promise.all([loadStatus(), loadComments(), loadLinks(), loadSchedules()]);
-  updateTracker();
+  await Promise.all([loadStatus(), loadComments(), loadLinks()]);
+  renderTracker();
   renderSchedule();
-  setInterval(updateTracker, 60000);
-  setInterval(loadComments, 120000);
+  setInterval(renderTracker, 60000);
+  setInterval(loadComments,  120000);
 }
-
 init();
 </script>
 </body>
