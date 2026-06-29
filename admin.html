@@ -7,26 +7,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --green:  #1a7a3c;
-      --green2: #23a455;
-      --dark:   #0d0d0d;
-      --panel:  #141414;
-      --card:   #1a1a1a;
-      --border: #2a2a2a;
-      --text:   #e8e8e8;
-      --muted:  #888;
-      --yellow: #f5c842;
-      --red:    #e03c3c;
-      --amber:  #f0922b;
+      --green:  #1a7a3c; --green2: #23a455; --dark: #0d0d0d; --panel: #141414;
+      --card:   #1a1a1a; --border: #2a2a2a; --text: #e8e8e8; --muted: #888;
+      --yellow: #f5c842; --red: #e03c3c; --amber: #f0922b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
 
-    /* LOGIN */
     #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 360px; text-align: center; }
     .login-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 4px; color: var(--green2); margin-bottom: 4px; }
-    .login-sub { font-size: 0.72rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; }
+    .login-sub  { font-size: 0.72rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; }
     .login-label { text-align: left; font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
     .login-input { width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 12px 16px; border-radius: 10px; font-size: 1rem; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 14px; text-align: center; letter-spacing: 3px; transition: border-color .2s; }
     .login-input:focus { border-color: var(--green); }
@@ -34,7 +25,6 @@
     .login-btn:hover { background: var(--green2); }
     .login-error { font-size: 0.8rem; color: var(--red); margin-top: 10px; display: none; }
 
-    /* ADMIN */
     #admin-screen { display: none; }
     header { background: var(--panel); border-bottom: 2px solid var(--green); padding: 16px 24px; display: flex; align-items: center; gap: 14px; }
     .header-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 3px; color: var(--green2); }
@@ -43,13 +33,16 @@
     .logout-btn:hover { border-color: var(--red); color: var(--red); }
 
     main { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; display: flex; flex-direction: column; gap: 20px; }
-
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
     .card-header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 10px; }
     .card-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; color: var(--green2); }
     .card-body { padding: 20px; }
 
-    /* STATUS */
+    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .stat-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .stat-value { font-family: 'Roboto Mono', monospace; font-size: 1.8rem; font-weight: 700; color: var(--green2); }
+    .stat-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
     .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
     .status-opt { display: flex; align-items: center; gap: 10px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all .2s; background: var(--panel); }
     .status-opt.selected { border-color: var(--green2); background: rgba(26,122,60,.15); }
@@ -57,15 +50,13 @@
     .current-status-bar { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.82rem; color: var(--muted); }
     #current-status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
-    /* LINKS */
     .link-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
     .link-icon-label { font-size: 1.1rem; width: 32px; text-align: center; flex-shrink: 0; }
     .link-name-input, .link-url-input { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s; }
     .link-name-input { width: 130px; flex-shrink: 0; }
-    .link-url-input { flex: 1; }
+    .link-url-input  { flex: 1; }
     .link-name-input:focus, .link-url-input:focus { border-color: var(--green); }
 
-    /* COMMENTS */
     .comment-form-admin { display: flex; gap: 8px; margin-bottom: 18px; }
     .comment-textarea { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; font-family: 'Inter', sans-serif; resize: vertical; outline: none; transition: border-color .2s; }
     .comment-textarea:focus { border-color: var(--green); }
@@ -87,64 +78,33 @@
     .del-btn:hover { background: rgba(224,60,60,.15); }
     .empty-msg { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; }
 
-    /* HORÁRIOS EDITOR */
     .schedule-editor-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
     .sched-tab { flex: 1; padding: 8px; background: var(--panel); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center; transition: all .2s; }
     .sched-tab.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.1); }
-
     .dir-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
     .dir-tab { flex: 1; padding: 7px; background: var(--panel); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all .2s; }
     .dir-tab.active { border-color: var(--amber); color: var(--amber); background: rgba(240,146,43,.08); }
-
     .schedule-editor-wrap { overflow-x: auto; margin-bottom: 16px; }
-
     .schedule-editor-table { border-collapse: collapse; min-width: 100%; }
     .schedule-editor-table th { background: var(--panel); padding: 8px 6px; text-align: center; color: var(--green2); font-size: 0.68rem; letter-spacing: .5px; border: 1px solid var(--border); white-space: nowrap; font-family: 'Inter', sans-serif; }
     .schedule-editor-table td { border: 1px solid var(--border); padding: 3px; }
-
-    .time-input {
-      background: var(--dark);
-      border: none;
-      color: var(--text);
-      font-family: 'Roboto Mono', monospace;
-      font-size: 0.75rem;
-      padding: 5px 4px;
-      text-align: center;
-      width: 52px;
-      outline: none;
-      border-radius: 4px;
-      transition: background .15s;
-    }
+    .time-input { background: var(--dark); border: none; color: var(--text); font-family: 'Roboto Mono', monospace; font-size: 0.75rem; padding: 5px 4px; text-align: center; width: 52px; outline: none; border-radius: 4px; transition: background .15s; }
     .time-input:focus { background: rgba(26,122,60,.2); color: var(--green2); }
-
     .trip-row-num { font-family: 'Roboto Mono', monospace; font-size: 0.65rem; color: var(--muted); text-align: center; padding: 4px 6px; background: var(--panel); white-space: nowrap; }
-
     .add-trip-btn { display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: transparent; border: 1px dashed var(--border); border-radius: 8px; color: var(--muted); font-size: 0.82rem; cursor: pointer; transition: all .2s; width: 100%; margin-bottom: 12px; }
     .add-trip-btn:hover { border-color: var(--green); color: var(--green2); }
-
     .del-trip-btn { background: transparent; border: none; color: #444; font-size: 0.75rem; cursor: pointer; padding: 4px 6px; border-radius: 4px; transition: color .2s; }
     .del-trip-btn:hover { color: var(--red); }
-
     .stations-editor { margin-bottom: 16px; }
     .stations-editor-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
     .stations-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .station-input { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; font-family: 'Inter', sans-serif; outline: none; width: 130px; transition: border-color .2s; }
     .station-input:focus { border-color: var(--green); }
-
     .reset-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 8px 14px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; transition: all .2s; margin-right: 8px; }
     .reset-btn:hover { border-color: var(--amber); color: var(--amber); }
-
-    /* BUTTONS */
     .save-btn { background: var(--green); border: none; color: #fff; padding: 11px 24px; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: background .2s; letter-spacing: .5px; }
     .save-btn:hover { background: var(--green2); }
 
-    /* STATS */
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .stat-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
-    .stat-value { font-family: 'Roboto Mono', monospace; font-size: 1.8rem; font-weight: 700; color: var(--green2); }
-    .stat-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
-
-    /* TOAST */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 0.88rem; transition: transform .3s; z-index: 999; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -158,7 +118,6 @@
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">VLT NEWS</div>
@@ -170,38 +129,25 @@
   </div>
 </div>
 
-<!-- ADMIN -->
 <div id="admin-screen">
   <header>
     <div class="header-title">VLT NEWS</div>
     <div class="header-badge">Admin</div>
     <button class="logout-btn" onclick="doLogout()">Sair</button>
   </header>
-
   <main>
 
-    <!-- STATS -->
     <div class="card">
       <div class="card-header"><span>📊</span><h2>Visão Geral</h2></div>
       <div class="card-body">
         <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-value" id="stat-comments">—</div>
-            <div class="stat-label">Avisos ativos</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value" id="stat-status-val">—</div>
-            <div class="stat-label">Status atual</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-value" id="stat-time">—</div>
-            <div class="stat-label">Hora local</div>
-          </div>
+          <div class="stat-box"><div class="stat-value" id="stat-comments">—</div><div class="stat-label">Avisos ativos</div></div>
+          <div class="stat-box"><div class="stat-value" id="stat-status-val">—</div><div class="stat-label">Status atual</div></div>
+          <div class="stat-box"><div class="stat-value" id="stat-time">—</div><div class="stat-label">Hora local</div></div>
         </div>
       </div>
     </div>
 
-    <!-- STATUS -->
     <div class="card">
       <div class="card-header"><span>🟢</span><h2>Status do VLT</h2></div>
       <div class="card-body">
@@ -210,24 +156,15 @@
           <span id="current-status-text">Carregando...</span>
         </div>
         <div class="status-grid">
-          <div class="status-opt selected" data-color="green" onclick="selectStatus(this)">
-            <div class="sdot" style="background:#1a7a3c"></div> No horário
-          </div>
-          <div class="status-opt" data-color="yellow" onclick="selectStatus(this)">
-            <div class="sdot" style="background:#f5c842"></div> Leve atraso
-          </div>
-          <div class="status-opt" data-color="red" onclick="selectStatus(this)">
-            <div class="sdot" style="background:#e03c3c"></div> Muito atrasado
-          </div>
-          <div class="status-opt" data-color="black" onclick="selectStatus(this)">
-            <div class="sdot" style="background:#555"></div> Fora de operação
-          </div>
+          <div class="status-opt selected" data-color="green"  onclick="selectStatus(this)"><div class="sdot" style="background:#1a7a3c"></div> No horário</div>
+          <div class="status-opt"          data-color="yellow" onclick="selectStatus(this)"><div class="sdot" style="background:#f5c842"></div> Leve atraso</div>
+          <div class="status-opt"          data-color="red"    onclick="selectStatus(this)"><div class="sdot" style="background:#e03c3c"></div> Muito atrasado</div>
+          <div class="status-opt"          data-color="black"  onclick="selectStatus(this)"><div class="sdot" style="background:#555"></div> Fora de operação</div>
         </div>
         <button class="save-btn" onclick="saveStatus()">Salvar Status</button>
       </div>
     </div>
 
-    <!-- LINKS -->
     <div class="card">
       <div class="card-header"><span>🔗</span><h2>Links</h2></div>
       <div class="card-body">
@@ -236,36 +173,28 @@
       </div>
     </div>
 
-    <!-- HORÁRIOS EDITOR -->
     <div class="card">
       <div class="card-header"><span>🕐</span><h2>Horários</h2></div>
       <div class="card-body">
         <div class="schedule-editor-tabs">
-          <div class="sched-tab active" onclick="selectSchedLine('sul', this)">🟢 Linha Sul</div>
-          <div class="sched-tab" onclick="selectSchedLine('norte', this)">🔵 Linha Norte</div>
+          <div class="sched-tab active" onclick="selectSchedLine('sul', this)">🟢 VLT Sul</div>
+          <div class="sched-tab" onclick="selectSchedLine('norte', this)">🔵 VLT Norte</div>
         </div>
-
         <div class="dir-tabs">
           <div class="dir-tab active" id="dir-tab-0" onclick="selectSchedDir(0)">↗ Ida</div>
           <div class="dir-tab" id="dir-tab-1" onclick="selectSchedDir(1)">↙ Volta</div>
         </div>
-
-        <!-- Estações -->
         <div class="stations-editor">
           <div class="stations-editor-label">Nomes das Estações (ordem da ida)</div>
           <div class="stations-list" id="stations-list"></div>
         </div>
-
-        <!-- Tabela de horários -->
         <div class="schedule-editor-wrap">
-          <table class="schedule-editor-table" id="sched-editor-table">
+          <table class="schedule-editor-table">
             <thead id="sched-editor-thead"></thead>
             <tbody id="sched-editor-tbody"></tbody>
           </table>
         </div>
-
         <button class="add-trip-btn" onclick="addTrip()">＋ Adicionar viagem</button>
-
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="reset-btn" onclick="resetToDefault()">↺ Restaurar padrão</button>
           <button class="save-btn" onclick="saveSchedules()">💾 Salvar Horários</button>
@@ -273,7 +202,6 @@
       </div>
     </div>
 
-    <!-- MURAL ADMIN -->
     <div class="card">
       <div class="card-header"><span>📢</span><h2>Mural de Avisos</h2></div>
       <div class="card-body">
@@ -293,12 +221,12 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_hv_CGrOu6sRCyAveyzN6TA_ckEZRuCm';
-const ADMIN_PASSWORD = 'batata';
+const SUPABASE_URL    = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
+const SUPABASE_KEY    = 'sb_publishable_hv_CGrOu6sRCyAveyzN6TA_ckEZRuCm';
+const ADMIN_PASSWORD  = 'batata';
 const COMMENT_LIFETIME_HOURS = 24;
 
-const headers = {
+const SB = {
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`,
   'Content-Type': 'application/json',
@@ -312,17 +240,17 @@ const STATUS_MAP = {
   black:  { color: '#555',    label: 'Fora de operação' }
 };
 
-// Horários padrão completos
+// Horários padrão atualizados do PDF Metrofor
 const DEFAULT_SCHEDULES = {
   sul: {
-    stations: ['COHAB II','Dom Expedito','B. do Arco','C. dos Velhos','Dom José','Sumaré'],
+    stations: ['COHAB II','Dom Expedito','Blvd Duarte','C. dos Velhos','Dom José','Sumaré'],
     directions: [
       [
-        ['5:52','5:54','5:57','6:02','6:06','6:12'],
-        ['6:40','6:42','6:45','6:50','6:54','7:00'],
-        ['7:28','7:30','7:33','7:38','7:42','7:48'],
-        ['8:16','8:18','8:21','8:26','8:30','8:36'],
-        ['9:19','9:21','9:24','9:29','9:33','9:39'],
+        ['05:52','05:54','05:57','06:02','06:06','06:12'],
+        ['06:40','06:42','06:45','06:50','06:54','07:00'],
+        ['07:28','07:30','07:33','07:38','07:42','07:48'],
+        ['08:16','08:18','08:21','08:26','08:30','08:36'],
+        ['09:19','09:21','09:24','09:29','09:33','09:39'],
         ['10:07','10:09','10:12','10:17','10:21','10:27'],
         ['10:55','10:57','11:00','11:05','11:09','11:15'],
         ['11:43','11:45','11:48','11:53','11:57','12:03'],
@@ -341,12 +269,12 @@ const DEFAULT_SCHEDULES = {
         ['22:37','22:39','22:42','22:47','22:51','22:57'],
       ],
       [
-        ['5:30','5:35','5:40','5:43','5:46','5:49'],
-        ['6:18','6:23','6:28','6:31','6:34','6:37'],
-        ['7:06','7:11','7:16','7:19','7:22','7:25'],
-        ['7:54','7:59','8:04','8:07','8:10','8:13'],
-        ['8:57','9:02','9:07','9:10','9:13','9:16'],
-        ['9:45','9:50','9:55','9:58','10:01','10:04'],
+        ['05:30','05:35','05:40','05:43','05:46','05:49'],
+        ['06:18','06:23','06:28','06:31','06:34','06:37'],
+        ['07:06','07:11','07:16','07:19','07:22','07:25'],
+        ['07:54','07:59','08:04','08:07','08:10','08:13'],
+        ['08:57','09:02','09:07','09:10','09:13','09:16'],
+        ['09:45','09:50','09:55','09:58','10:01','10:04'],
         ['10:33','10:38','10:43','10:46','10:49','10:52'],
         ['11:21','11:26','11:31','11:34','11:37','11:40'],
         ['12:09','12:14','12:19','12:22','12:25','12:28'],
@@ -366,15 +294,15 @@ const DEFAULT_SCHEDULES = {
     ]
   },
   norte: {
-    stations: ['COHAB III','José Euclides','Junco','C. dos Velhos','A. da Brasília','Grendene','N. Recanto'],
+    stations: ['COHAB III','J. Euclides','Junco','C. dos Velhos','A. Brasilia','Grendene','N. Recanto'],
     directions: [
       [
-        ['5:27','5:30','5:33','5:40','5:44','5:47','5:49'],
-        ['6:15','6:18','6:21','6:28','6:32','6:35','6:37'],
-        ['7:03','7:06','7:09','7:16','7:20','7:23','7:25'],
-        ['7:51','7:54','7:57','8:04','8:08','8:11','8:13'],
-        ['8:54','8:57','9:00','9:07','9:11','9:14','9:16'],
-        ['9:42','9:45','9:48','9:55','9:59','10:02','10:04'],
+        ['05:27','05:30','05:33','05:40','05:44','05:47','05:49'],
+        ['06:15','06:18','06:21','06:28','06:32','06:35','06:37'],
+        ['07:03','07:06','07:09','07:16','07:20','07:23','07:25'],
+        ['07:51','07:54','07:57','08:04','08:08','08:11','08:13'],
+        ['08:54','08:57','09:00','09:07','09:11','09:14','09:16'],
+        ['09:42','09:45','09:48','09:55','09:59','10:02','10:04'],
         ['10:30','10:33','10:36','10:43','10:47','10:50','10:52'],
         ['11:18','11:21','11:24','11:31','11:35','11:38','11:40'],
         ['12:06','12:09','12:12','12:19','12:23','12:26','12:28'],
@@ -393,11 +321,11 @@ const DEFAULT_SCHEDULES = {
         ['23:00','23:03','23:06','23:13','23:17','23:20','23:22'],
       ],
       [
-        ['5:51','5:53','5:56','6:02','6:07','6:10','6:13'],
-        ['6:39','6:41','6:44','6:50','6:55','6:58','7:01'],
-        ['7:27','7:29','7:32','7:38','7:43','7:46','7:49'],
-        ['8:15','8:17','8:20','8:26','8:31','8:34','8:37'],
-        ['9:18','9:20','9:23','9:29','9:34','9:37','9:40'],
+        ['05:51','05:53','05:56','06:02','06:07','06:10','06:13'],
+        ['06:39','06:41','06:44','06:50','06:55','06:58','07:01'],
+        ['07:27','07:29','07:32','07:38','07:43','07:46','07:49'],
+        ['08:15','08:17','08:20','08:26','08:31','08:34','08:37'],
+        ['09:18','09:20','09:23','09:29','09:34','09:37','09:40'],
         ['10:06','10:08','10:11','10:17','10:22','10:25','10:28'],
         ['10:54','10:56','10:59','11:05','11:10','11:13','11:16'],
         ['11:42','11:44','11:47','11:53','11:58','12:01','12:04'],
@@ -419,16 +347,15 @@ const DEFAULT_SCHEDULES = {
   }
 };
 
-let selectedStatus = 'green';
-let linksData = [];
-let schedules = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES));
+let selectedStatus  = 'green';
+let linksData       = [];
+let schedules       = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES));
 let activeSchedLine = 'sul';
-let activeSchedDir = 0;
+let activeSchedDir  = 0;
 
 // ── LOGIN ──
 function doLogin() {
-  const val = document.getElementById('login-input').value;
-  if (val === ADMIN_PASSWORD) {
+  if (document.getElementById('login-input').value === ADMIN_PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').style.display = 'block';
     initAdmin();
@@ -460,7 +387,7 @@ function updateClock() {
 
 // ── STATUS ──
 async function loadStatus() {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers });
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, { headers: SB });
   const d = await r.json();
   if (d && d[0]) applyStatus(d[0].color);
 }
@@ -470,9 +397,7 @@ function applyStatus(color) {
   document.getElementById('current-status-dot').style.cssText = `width:12px;height:12px;border-radius:50%;background:${s.color}`;
   document.getElementById('current-status-text').textContent = `Status atual: ${s.label}`;
   document.getElementById('stat-status-val').textContent = ['🟢','🟡','🔴','⚫'][['green','yellow','red','black'].indexOf(color)] || '🟢';
-  document.querySelectorAll('.status-opt').forEach(el => {
-    el.classList.toggle('selected', el.dataset.color === color);
-  });
+  document.querySelectorAll('.status-opt').forEach(el => el.classList.toggle('selected', el.dataset.color === color));
 }
 function selectStatus(el) {
   document.querySelectorAll('.status-opt').forEach(e => e.classList.remove('selected'));
@@ -481,24 +406,23 @@ function selectStatus(el) {
 }
 async function saveStatus() {
   await fetch(`${SUPABASE_URL}/rest/v1/status?id=eq.1`, {
-    method: 'PATCH', headers,
+    method: 'PATCH', headers: SB,
     body: JSON.stringify({ color: selectedStatus, updated_at: new Date().toISOString() })
   });
   applyStatus(selectedStatus);
-  showToast('✅ Status atualizado!');
+  showToast('Status atualizado!');
 }
 
 // ── LINKS ──
 async function loadLinks() {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`, { headers });
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`, { headers: SB });
   linksData = await r.json();
   renderLinksEditor();
 }
 function renderLinksEditor() {
-  const icons = ['📸','💬','📢'];
+  const icons  = ['📸','💬','📢'];
   const labels = ['Instagram','Comunidade','Canal'];
-  const editor = document.getElementById('links-editor');
-  editor.innerHTML = linksData.map((link, i) => `
+  document.getElementById('links-editor').innerHTML = linksData.map((link, i) => `
     <div class="link-row">
       <div class="link-icon-label">${icons[i] || '🔗'}</div>
       <input class="link-name-input" id="link-name-${link.id}" value="${escapeAttr(link.name || labels[i] || '')}" placeholder="${labels[i] || 'Nome'}" />
@@ -511,86 +435,68 @@ async function saveLinks() {
     const name = document.getElementById(`link-name-${link.id}`).value.trim();
     const url  = document.getElementById(`link-url-${link.id}`).value.trim();
     await fetch(`${SUPABASE_URL}/rest/v1/links?id=eq.${link.id}`, {
-      method: 'PATCH', headers,
-      body: JSON.stringify({ name, url })
+      method: 'PATCH', headers: SB, body: JSON.stringify({ name, url })
     });
   }
-  showToast('✅ Links salvos!');
+  showToast('Links salvos!');
   await loadLinks();
 }
 
 // ── HORÁRIOS EDITOR ──
 async function loadSchedules() {
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, { headers });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, { headers: SB });
     const d = await r.json();
-    if (d && d[0] && d[0].data) {
-      schedules = d[0].data;
-    }
-  } catch(e) { /* usa default */ }
+    if (d && d[0] && d[0].data) schedules = d[0].data;
+  } catch(e) {}
   renderScheduleEditor();
 }
-
 function selectSchedLine(line, el) {
-  activeSchedLine = line;
+  activeSchedLine = line; activeSchedDir = 0;
   document.querySelectorAll('.sched-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  activeSchedDir = 0;
   document.getElementById('dir-tab-0').classList.add('active');
   document.getElementById('dir-tab-1').classList.remove('active');
   renderScheduleEditor();
 }
-
 function selectSchedDir(dir) {
   activeSchedDir = dir;
   document.getElementById('dir-tab-0').classList.toggle('active', dir === 0);
   document.getElementById('dir-tab-1').classList.toggle('active', dir === 1);
   renderScheduleEditor();
 }
-
 function renderScheduleEditor() {
-  const data = schedules[activeSchedLine];
+  const data     = schedules[activeSchedLine];
   const stations = data.stations;
-  const trips = data.directions[activeSchedDir];
+  const trips    = data.directions[activeSchedDir];
+  const displaySt = activeSchedDir === 0 ? stations : [...stations].reverse();
 
-  // Estações
-  const stList = document.getElementById('stations-list');
-  stList.innerHTML = stations.map((name, i) =>
-    `<input class="station-input" id="station-${i}" value="${escapeAttr(name)}" placeholder="Estação ${i+1}" />`
+  document.getElementById('stations-list').innerHTML = stations.map((name, i) =>
+    `<input class="station-input" id="station-${i}" value="${escapeAttr(name)}" placeholder="Estacao ${i+1}" />`
   ).join('');
 
-  // Cabeçalho
-  const displayStations = activeSchedDir === 0 ? stations : [...stations].reverse();
   document.getElementById('sched-editor-thead').innerHTML =
-    `<tr><th>#</th>${displayStations.map(s => `<th>${s}</th>`).join('')}<th></th></tr>`;
+    `<tr><th>#</th>${displaySt.map(s => `<th>${s}</th>`).join('')}<th></th></tr>`;
 
-  // Linhas
   document.getElementById('sched-editor-tbody').innerHTML = trips.map((trip, i) => {
     const cells = activeSchedDir === 0 ? trip : [...trip].reverse();
     return `<tr>
-      <td class="trip-row-num">${i + 1}</td>
+      <td class="trip-row-num">${i+1}</td>
       ${cells.map((t, ci) => {
-        // índice real para salvar (se volta, reverter índice)
-        const realIdx = activeSchedDir === 0 ? ci : (trip.length - 1 - ci);
+        const realIdx = activeSchedDir === 0 ? ci : (trip.length-1-ci);
         return `<td><input class="time-input" id="t-${i}-${realIdx}" value="${t}" maxlength="5" /></td>`;
       }).join('')}
-      <td><button class="del-trip-btn" onclick="deleteTrip(${i})" title="Remover viagem">✕</button></td>
+      <td><button class="del-trip-btn" onclick="deleteTrip(${i})" title="Remover">x</button></td>
     </tr>`;
   }).join('');
 }
-
 function readEditorToMemory() {
-  const data = schedules[activeSchedLine];
-  const stations = data.stations;
-  const trips = data.directions[activeSchedDir];
-
-  // Lê estações
-  stations.forEach((_, i) => {
+  const data   = schedules[activeSchedLine];
+  const trips  = data.directions[activeSchedDir];
+  data.stations.forEach((_, i) => {
     const el = document.getElementById(`station-${i}`);
     if (el) data.stations[i] = el.value.trim();
   });
-
-  // Lê horários
   trips.forEach((trip, i) => {
     trip.forEach((_, j) => {
       const el = document.getElementById(`t-${i}-${j}`);
@@ -598,130 +504,108 @@ function readEditorToMemory() {
     });
   });
 }
-
 function addTrip() {
   readEditorToMemory();
-  const data = schedules[activeSchedLine];
+  const data  = schedules[activeSchedLine];
   const trips = data.directions[activeSchedDir];
-  const stationCount = data.stations.length;
-  const lastTrip = trips[trips.length - 1] || [];
-  // Cria viagem vazia com mesmo número de estações
-  const newTrip = Array(stationCount).fill('--:--');
-  trips.push(newTrip);
+  trips.push(Array(data.stations.length).fill('--:--'));
   renderScheduleEditor();
 }
-
 function deleteTrip(idx) {
   readEditorToMemory();
   const trips = schedules[activeSchedLine].directions[activeSchedDir];
-  if (trips.length <= 1) { showToast('⚠️ Mínimo de 1 viagem.'); return; }
+  if (trips.length <= 1) { showToast('Minimo de 1 viagem.'); return; }
   trips.splice(idx, 1);
   renderScheduleEditor();
 }
-
 function resetToDefault() {
-  if (!confirm('Restaurar horários padrão da ' + (activeSchedLine === 'sul' ? 'Linha Sul' : 'Linha Norte') + '?')) return;
+  if (!confirm('Restaurar horarios padrao da ' + (activeSchedLine === 'sul' ? 'Linha Sul' : 'Linha Norte') + '?')) return;
   schedules[activeSchedLine] = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES[activeSchedLine]));
   renderScheduleEditor();
-  showToast('↺ Horários restaurados!');
+  showToast('Horarios restaurados!');
 }
-
 async function saveSchedules() {
   readEditorToMemory();
   try {
-    // Tenta PATCH primeiro, se não existir faz POST
-    const check = await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, { headers });
+    const check    = await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, { headers: SB });
     const existing = await check.json();
     if (existing && existing.length > 0) {
       await fetch(`${SUPABASE_URL}/rest/v1/schedules?id=eq.1`, {
-        method: 'PATCH', headers,
+        method: 'PATCH', headers: SB,
         body: JSON.stringify({ data: schedules, updated_at: new Date().toISOString() })
       });
     } else {
       await fetch(`${SUPABASE_URL}/rest/v1/schedules`, {
-        method: 'POST', headers,
+        method: 'POST', headers: SB,
         body: JSON.stringify({ id: 1, data: schedules, updated_at: new Date().toISOString() })
       });
     }
-    showToast('✅ Horários salvos!');
+    showToast('Horarios salvos!');
     renderScheduleEditor();
-  } catch(e) {
-    showToast('❌ Erro ao salvar horários.');
-    console.error(e);
-  }
+  } catch(e) { showToast('Erro ao salvar horarios.'); }
 }
 
-// ── COMMENTS ──
+// ── MURAL ──
 function timeAgo(iso) {
-  const diff = Math.floor((Date.now() - new Date(iso)) / 60000);
-  if (diff < 1) return 'agora mesmo';
-  if (diff < 60) return `${diff} min atrás`;
-  return `${Math.floor(diff/60)}h atrás`;
+  const d = Math.floor((Date.now()-new Date(iso))/60000);
+  if (d<1)  return 'agora mesmo';
+  if (d<60) return `${d} min atras`;
+  return `${Math.floor(d/60)}h atras`;
 }
 async function loadComments() {
-  const cutoff = new Date(Date.now() - COMMENT_LIFETIME_HOURS * 3600000).toISOString();
-  await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`, { method: 'DELETE', headers });
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.desc&limit=30`, { headers });
+  const cutoff = new Date(Date.now()-COMMENT_LIFETIME_HOURS*3600000).toISOString();
+  await fetch(`${SUPABASE_URL}/rest/v1/comments?created_at=lt.${cutoff}`, { method:'DELETE', headers: SB });
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/comments?order=created_at.desc&limit=30`, { headers: SB });
   const data = await r.json();
   renderComments(data);
   document.getElementById('stat-comments').textContent = data ? data.length : 0;
 }
 function renderComments(comments) {
   const list = document.getElementById('admin-comments-list');
-  if (!comments || comments.length === 0) {
-    list.innerHTML = '<div class="empty-msg">Nenhum aviso no mural.</div>';
-    return;
-  }
-  const lifetimeMs = COMMENT_LIFETIME_HOURS * 3600000;
+  if (!comments || comments.length === 0) { list.innerHTML='<div class="empty-msg">Nenhum aviso no mural.</div>'; return; }
+  const lt = COMMENT_LIFETIME_HOURS*3600000;
   list.innerHTML = comments.map(c => {
-    const age = Date.now() - new Date(c.created_at).getTime();
-    const pct = Math.max(0, Math.min(100, 100 - (age / lifetimeMs) * 100));
-    return `
-      <div class="comment-item ${c.is_admin ? 'is-admin' : ''}">
-        <div style="flex:1">
-          <div class="comment-meta">
-            <span class="comment-author ${c.is_admin ? 'admin' : ''}">${c.is_admin ? 'Admin' : 'Usuário'}</span>
-            ${c.is_admin ? '<span class="admin-badge">ADMIN</span>' : ''}
-            <span class="comment-time">${timeAgo(c.created_at)}</span>
-          </div>
-          <div class="comment-text">${escapeHtml(c.text)}</div>
-          <div class="expires-bar"><div class="expires-fill" style="width:${pct}%"></div></div>
+    const pct = Math.max(0, Math.min(100, 100-(Date.now()-new Date(c.created_at).getTime())/lt*100));
+    return `<div class="comment-item ${c.is_admin?'is-admin':''}">
+      <div class="comment-content">
+        <div class="comment-meta">
+          <span class="comment-author ${c.is_admin?'admin':''}">${c.is_admin?'Admin':'Usuario'}</span>
+          ${c.is_admin?'<span class="admin-badge">ADMIN</span>':''}
+          <span class="comment-time">${timeAgo(c.created_at)}</span>
         </div>
-        <button class="del-btn" onclick="deleteComment('${c.id}')" title="Excluir">✕</button>
+        <div class="comment-text">${escapeHtml(c.text)}</div>
+        <div class="expires-bar"><div class="expires-fill" style="width:${pct}%"></div></div>
       </div>
-    `;
+      <button class="del-btn" onclick="deleteComment('${c.id}')">x</button>
+    </div>`;
   }).join('');
 }
 async function postAdminComment() {
   const input = document.getElementById('admin-comment');
-  const text = input.value.trim();
+  const text  = input.value.trim();
   if (!text) return;
   input.disabled = true;
-  await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
-    method: 'POST', headers,
-    body: JSON.stringify({ text, is_admin: true })
-  });
-  input.value = '';
-  input.disabled = false;
+  await fetch(`${SUPABASE_URL}/rest/v1/comments`, { method:'POST', headers: SB, body: JSON.stringify({text, is_admin:true}) });
+  input.value = ''; input.disabled = false;
   await loadComments();
-  showToast('✅ Aviso postado!');
+  showToast('Aviso postado!');
 }
 async function deleteComment(id) {
-  await fetch(`${SUPABASE_URL}/rest/v1/comments?id=eq.${id}`, { method: 'DELETE', headers });
+  await fetch(`${SUPABASE_URL}/rest/v1/comments?id=eq.${id}`, { method:'DELETE', headers: SB });
   await loadComments();
-  showToast('🗑️ Aviso removido.');
+  showToast('Aviso removido.');
 }
 
 // ── HELPERS ──
-function escapeHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escapeAttr(t) { return String(t).replace(/"/g,'&quot;'); }
+function escapeHtml(t)  { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeAttr(t)  { return String(t).replace(/"/g,'&quot;'); }
 
 // ── INIT ──
 async function initAdmin() {
   await Promise.all([loadStatus(), loadLinks(), loadComments(), loadSchedules()]);
   updateClock();
-  setInterval(updateClock, 30000);
-  setInterval(loadComments, 60000);
+  setInterval(updateClock,   30000);
+  setInterval(loadComments,  60000);
 }
 </script>
 </body>
