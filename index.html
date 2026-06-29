@@ -255,23 +255,7 @@
   <!-- LINKS -->
   <div class="card">
     <div class="card-header"><span>🔗</span><h2>Links</h2></div>
-    <div class="links-body">
-      <a href="#" class="link-btn" id="link-inst" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon inst">📸</div>
-        <span id="link-inst-name">Instagram</span>
-        <span class="link-arrow">›</span>
-      </a>
-      <a href="#" class="link-btn" id="link-comunidade" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon wpp">💬</div>
-        <span id="link-comunidade-name">Comunidade</span>
-        <span class="link-arrow">›</span>
-      </a>
-      <a href="#" class="link-btn" id="link-canal" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon chan">📢</div>
-        <span id="link-canal-name">Canal</span>
-        <span class="link-arrow">›</span>
-      </a>
-    </div>
+    <div class="links-body" id="links-body"></div>
   </div>
 
   <!-- MURAL -->
@@ -314,7 +298,7 @@
 
 </main>
 
-<footer>VLT NEWS · Sobral, CE · Informações baseadas na grade oficial Metrofor</footer>
+<footer>VLT NEWS · Sobral, CE · <a href="https://archive.org/details/horarios-sobral-250402-164722" target="_blank" rel="noopener" style="color:var(--green2);text-decoration:none">Grade oficial Metrofor</a><br><span style="margin-top:4px;display:block">Site desenvolvido por <strong style="color:var(--text)">VR Web Solutions</strong></span></footer>
 
 <!-- STATUS MODAL -->
 <div class="modal-overlay" id="status-modal">
@@ -705,23 +689,24 @@ async function postComment() {
 }
 
 // ── Links ────────────────────────────────────────────────────────────────────
+const LINK_ICONS = ['📸','💬','📢','🌐','📌','🎵'];
+const LINK_COLORS = ['inst','wpp','chan','wpp','inst','chan'];
+
 async function loadLinks() {
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/links?order=id`,{headers:SB});
     const data = await r.json();
-    if (!data||data.length===0) return;
-    const slots=[
-      {el:'link-inst',nameEl:'link-inst-name'},
-      {el:'link-comunidade',nameEl:'link-comunidade-name'},
-      {el:'link-canal',nameEl:'link-canal-name'},
-    ];
-    data.forEach((link,i)=>{
-      if(!slots[i]) return;
-      const a=document.getElementById(slots[i].el);
-      const s=document.getElementById(slots[i].nameEl);
-      if(a) a.href=link.url||'#';
-      if(s) s.textContent=link.name||s.textContent;
-    });
+    const body = document.getElementById('links-body');
+    if (!data||data.length===0) { body.innerHTML=''; return; }
+    body.innerHTML = data.map((link,i) => {
+      const icon  = LINK_ICONS[i]  || '🔗';
+      const color = LINK_COLORS[i] || 'chan';
+      return `<a href="${link.url||'#'}" class="link-btn" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon ${color}">${icon}</div>
+        <span>${escapeHtml(link.name||'Link')}</span>
+        <span class="link-arrow">›</span>
+      </a>`;
+    }).join('');
   } catch(e) { console.error(e); }
 }
 
