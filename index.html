@@ -79,6 +79,36 @@
       box-shadow: 0 0 6px currentColor;
     }
 
+    /* AJUSTE: seletor Oficial / Comunidade */
+    .mode-selector { display: flex; gap: 8px; margin-bottom: 14px; }
+    .mode-btn {
+      flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--panel); color: var(--muted); font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all .2s; text-align: center;
+    }
+    .mode-btn.active { border-color: var(--amber); color: var(--amber); background: rgba(240,146,43,.1); }
+
+    .report-section { margin-top: 4px; }
+    .dir-selector { display: flex; gap: 8px; margin-bottom: 4px; }
+    .dir-btn {
+      flex: 1; padding: 10px 8px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--panel); color: var(--muted); font-family: 'Inter', sans-serif;
+      font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all .2s; text-align: center;
+    }
+    .dir-btn.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.12); }
+    .report-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    .report-btn {
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px;
+      background: var(--panel); color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: 0.75rem; cursor: pointer; transition: all .2s;
+    }
+    .report-btn:hover { border-color: var(--green); color: var(--green2); }
+
+    .tracker-disclaimer {
+      margin-top: 16px; font-size: 0.65rem; color: var(--muted); text-align: center;
+      line-height: 1.4; border-top: 1px dashed var(--border); padding-top: 10px;
+    }
+
     /* Track */
     .track-outer {
       position: relative;
@@ -220,6 +250,14 @@
     .btn-save:hover { background: var(--green2); }
     .modal-error { font-size: 0.78rem; color: var(--red); margin-bottom: 10px; display: none; }
 
+    /* AJUSTE: changelog */
+    .changelog-item { border-bottom: 1px solid var(--border); padding: 12px 0; }
+    .changelog-item:last-child { border-bottom: none; }
+    .changelog-version { font-weight: 700; color: var(--green2); font-size: 0.85rem; }
+    .changelog-date { color: var(--muted); font-size: 0.72rem; margin-left: 6px; }
+    .changelog-item ul { margin: 6px 0 0 18px; padding: 0; }
+    .changelog-item li { font-size: 0.8rem; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+
     footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.7rem; border-top: 1px solid var(--border); }
 
     @media (max-width: 420px) {
@@ -322,7 +360,7 @@
 
 </main>
 
-<footer>VLT NEWS · Sobral, CE · <a href="https://archive.org/details/horarios-sobral-250402-164722" target="_blank" rel="noopener" style="color:var(--green2);text-decoration:none">Grade oficial Metrofor</a><br><span style="margin-top:4px;display:block">Site desenvolvido por <strong style="color:var(--text)">VR Web Solutions</strong></span></footer>
+<footer>VLT NEWS · Sobral, CE · <a href="https://archive.org/details/horarios-sobral-250402-164722" target="_blank" rel="noopener" style="color:var(--green2);text-decoration:none">Grade oficial Metrofor</a><br><span style="margin-top:4px;display:block">Site desenvolvido por <strong style="color:var(--text)">VR Web Solutions</strong></span><span style="margin-top:8px;display:block">v<span id="app-version"></span> · <a href="#" onclick="openChangelogModal();return false;" style="color:var(--green2);text-decoration:none">Ver novidades</a></span></footer>
 
 <!-- STATUS MODAL -->
 <div class="modal-overlay" id="status-modal">
@@ -339,6 +377,17 @@
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeStatusModal()">Cancelar</button>
       <button class="btn-save"   onclick="saveStatus()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- AJUSTE: modal de novidades/changelog -->
+<div class="modal-overlay" id="changelog-modal">
+  <div class="modal" style="max-width:420px;max-height:80vh;overflow-y:auto">
+    <h3>📋 Novidades</h3>
+    <div id="changelog-list"></div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn-save" style="width:100%" onclick="closeChangelogModal()">Fechar</button>
     </div>
   </div>
 </div>
@@ -467,6 +516,8 @@ let selectedStatus = 'green';
 let schedLine = 'sul';
 let schedDir  = 0;
 let lineStatuses = { sul: 'green', norte: 'green' }; // AJUSTE: status por linha
+let lineDelays   = { sul: 0, norte: 0 };             // AJUSTE: atraso manual (minutos) por linha
+let communityReports = { sul: null, norte: null };   // AJUSTE: último reporte da comunidade por linha
 
 function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
 function nowMin() { const n = new Date(); return n.getHours()*60+n.getMinutes(); }
@@ -478,12 +529,52 @@ function timeAgo(iso) {
 }
 function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── AJUSTE: versão e changelog do site ──
+const APP_VERSION = '1.3.0';
+const CHANGELOG = [
+  {
+    version: '1.3.0', date: '15/08/2026',
+    items: [
+      'Reportes da comunidade agora informam o sentido (ida/volta) na hora de reportar, em vez do site tentar adivinhar.',
+      'Campo de apelido opcional ao reportar, salvo neste aparelho.',
+    ]
+  },
+  {
+    version: '1.2.0', date: '15/08/2026',
+    items: [
+      'Modo Comunidade: depois de um reporte, o boneco passa a andar sozinho seguindo a grade a partir do ponto real informado.',
+      'Atraso manual por linha no admin, com reset automático à meia-noite.',
+      'Correção: o status no topo ficava travado sempre em "Sul", mesmo trocando de linha no rastreador.',
+    ]
+  },
+  {
+    version: '1.1.0', date: '15/08/2026',
+    items: [
+      'Novo toggle Oficial / Comunidade no rastreador.',
+      'Selo "AO VIVO" trocado por "SIMULADO" (oficial) e "COMUNIDADE" (comunidade), com aviso de que é uma simulação.',
+    ]
+  },
+];
+
+function renderChangelog() {
+  document.getElementById('app-version').textContent = APP_VERSION;
+  document.getElementById('changelog-list').innerHTML = CHANGELOG.map(entry => `
+    <div class="changelog-item">
+      <span class="changelog-version">v${entry.version}</span><span class="changelog-date">${entry.date}</span>
+      <ul>${entry.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+    </div>
+  `).join('');
+}
+function openChangelogModal()  { renderChangelog(); document.getElementById('changelog-modal').classList.add('open'); }
+function closeChangelogModal() { document.getElementById('changelog-modal').classList.remove('open'); }
+
 // ── Rastreador ──
-function findTripState(line) {
+function findTripState(line, atMin, forceDir) {
   const data = SCHEDULES[line];
-  const now  = nowMin();
+  const now  = (atMin !== undefined) ? atMin : effectiveNowMin(line); // AJUSTE: aceita horário custom
 
   for (let dir = 0; dir < 2; dir++) {
+    if (forceDir !== undefined && dir !== forceDir) continue; // AJUSTE: trava o sentido, se informado
     const trips    = data.directions[dir];
     const stations = dir === 0 ? data.stations : [...data.stations].reverse();
 
@@ -512,6 +603,7 @@ function findTripState(line) {
   let nextStart = null, nextStartDir = 0, nextStartTrip = null, nextStartStations = null;
 
   for (let dir = 0; dir < 2; dir++) {
+    if (forceDir !== undefined && dir !== forceDir) continue; // AJUSTE: trava o sentido, se informado
     const trips    = data.directions[dir];
     const stations = dir === 0 ? data.stations : [...data.stations].reverse();
     for (let t = 0; t < trips.length; t++) {
@@ -565,31 +657,121 @@ function selectTrackerLine(line, btn) {
   trackerLine = line;
   document.querySelectorAll('.line-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  applyHeaderStatus(); // AJUSTE: corrige header travado na linha antiga
   renderTracker();
 }
 
+// ── Modo do rastreador: Oficial (grade+atraso) vs Comunidade (reportes) ──
+let trackerMode = 'oficial';
+
+function selectTrackerMode(mode, btn) {
+  trackerMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTracker();
+}
+
+function effectiveNowMin(line) {
+  const delay = lineDelays[line] || 0;
+  return nowMin() - delay; // atraso empurra o boneco pra trás na grade
+}
+
+// AJUSTE: acha, na grade, o horário programado mais próximo pra uma estação —
+// usado pra descobrir o "atraso implícito" de um reporte da comunidade
+function scheduledTimeForStation(line, station, referenceMin, dirFilter) {
+  const data = SCHEDULES[line];
+  let best = null;
+  for (let dir = 0; dir < 2; dir++) {
+    if (dirFilter !== undefined && dirFilter !== null && dir !== dirFilter) continue; // AJUSTE: trava sentido informado
+    const stations = dir === 0 ? data.stations : [...data.stations].reverse();
+    const idx = stations.indexOf(station);
+    if (idx === -1) continue;
+    for (const trip of data.directions[dir]) {
+      const schedMin = toMin(trip[idx]);
+      const diff = Math.abs(schedMin - referenceMin);
+      if (!best || diff < best.diff) best = { schedMin, diff, dir };
+    }
+  }
+  return best;
+}
+
+// AJUSTE: calcula o estado atual do boneco da comunidade — ancora no reporte
+// real e deixa ele "andar" seguindo o ritmo da grade a partir dali
+function computeCommunityState(line) {
+  const rep = communityReports[line];
+  if (!rep) return null;
+  const ageMin = (Date.now() - new Date(rep.reported_at).getTime()) / 60000;
+  if (ageMin > COMMUNITY_STALE_MIN) return null;
+
+  const reportDate = new Date(rep.reported_at);
+  const reportMin  = reportDate.getHours() * 60 + reportDate.getMinutes();
+  // AJUSTE: usa o sentido informado no reporte; só infere se for um reporte antigo sem essa info
+  const dirFilter = (rep.dir === 0 || rep.dir === 1) ? rep.dir : undefined;
+  const match = scheduledTimeForStation(line, rep.station, reportMin, dirFilter);
+
+  // Se o reporte não bate com nenhum horário próximo da grade (ex: madrugada,
+  // fora de operação), não dá pra extrapolar — mostra só a posição estática.
+  if (!match || match.diff > 60) {
+    return { mode: 'static', rep, ageMin };
+  }
+
+  const impliedDelay = reportMin - match.schedMin;
+  const liveNow = nowMin() - impliedDelay;
+  const result = findTripState(line, liveNow, match.dir); // AJUSTE: trava a mesma direção do reporte
+  if (!result) return { mode: 'static', rep, ageMin };
+
+  return { mode: 'walking', rep, ageMin, impliedDelay, result };
+}
+
+// ── Dispatcher: escolhe entre o boneco Oficial e o da Comunidade ──
 function renderTracker() {
+  updateModeBadge();
+  if (trackerMode === 'comunidade') {
+    renderTrackerComunidade();
+  } else {
+    renderTrackerOficial();
+  }
+}
+
+const COMMUNITY_STALE_MIN = 40; // acima disso, o reporte é velho demais pra confiar
+
+function updateModeBadge() {
+  const badge = document.getElementById('tracker-badge');
+  if (!badge) return;
+  if (trackerMode === 'comunidade') {
+    const state = computeCommunityState(trackerLine);
+    badge.textContent = state ? '● COMUNIDADE' : 'COMUNIDADE (sem dados)';
+    badge.classList.toggle('live', !!state);
+  } else {
+    badge.textContent = 'SIMULADO';
+    badge.classList.remove('live');
+  }
+}
+
+function renderTrackerOficial() {
   const content = document.getElementById('tracker-content');
   const result  = findTripState(trackerLine);
 
   if (!result) {
-    content.innerHTML = `<div class="no-trip">🌙 Sem viagens hoje.</div>`;
+    content.innerHTML = `<div class="no-trip">🌙 Sem viagens hoje.</div>${disclaimerHTML()}`;
     clearInterval(window._waitInterval);
     return;
   }
 
   const { state, dir, pct, curSt, nextTime, trip, stations, waitMin } = result;
   const n   = stations.length;
-  const now = nowMin();
+  const now = effectiveNowMin(trackerLine); // AJUSTE: mesmo "agora" usado no cálculo do estado
 
-  // AJUSTE: indicador de status da linha
+  // AJUSTE: indicador de status da linha (+ atraso manual, se houver)
   const lineStatus = lineStatuses[trackerLine] || 'green';
   const statusColor = STATUS_MAP[lineStatus]?.color || '#1a7a3c';
   const statusLabel = STATUS_MAP[lineStatus]?.label || 'No horário';
+  const delay = lineDelays[trackerLine] || 0;
+  const delayText = delay > 0 ? ` (+${delay} min)` : '';
   const statusIndicatorHTML = `
     <div class="tracker-status-indicator">
       <span class="tracker-status-dot" style="background:${statusColor}; color:${statusColor};"></span>
-      <span>${trackerLine === 'sul' ? 'Linha Sul' : 'Linha Norte'}: ${statusLabel}</span>
+      <span>${trackerLine === 'sul' ? 'Linha Sul' : 'Linha Norte'}: ${statusLabel}${delayText}</span>
     </div>
   `;
 
@@ -628,7 +810,7 @@ function renderTracker() {
 
     clearInterval(window._waitInterval);
     window._waitInterval = setInterval(() => {
-      const remaining = window._stoppedWait.nextTimeMin - nowMin();
+      const remaining = window._stoppedWait.nextTimeMin - effectiveNowMin(trackerLine);
       const span = document.getElementById('wait-countdown');
       if (span) {
         if (remaining <= 0) {
@@ -652,6 +834,7 @@ function renderTracker() {
     : '';
 
   content.innerHTML = `
+    ${modeSelectorHTML()}
     ${statusIndicatorHTML}
     <p class="direction-label">Sentido: ${stations[0]} → ${stations[n-1]}</p>
     <div class="track-outer">
@@ -677,7 +860,163 @@ function renderTracker() {
         <div class="value">${trip[n-1]}</div>
       </div>
     </div>
+    ${disclaimerHTML()}
   `;
+}
+
+// ── Boneco da Comunidade: ancora no último "Vi o VLT aqui" e depois anda
+//    sozinho seguindo o ritmo da grade, exatamente como o boneco oficial ──
+function renderTrackerComunidade() {
+  const content = document.getElementById('tracker-content');
+  const state   = computeCommunityState(trackerLine);
+
+  if (!state) {
+    content.innerHTML = `
+      ${modeSelectorHTML()}
+      <div class="no-trip">👀 Sem reportes recentes da comunidade nessa linha.<br>Seja o primeiro a avisar onde viu o VLT!</div>
+      ${reportSectionHTML()}
+      ${disclaimerHTML()}
+    `;
+    return;
+  }
+
+  const { rep, ageMin } = state;
+  const repAgeText = ageMin < 1 ? 'agora mesmo' : Math.floor(ageMin) + ' min atrás';
+
+  if (state.mode === 'static') {
+    // Não deu pra estimar deslocamento (ex: fora do horário de operação) — mostra só o ponto reportado
+    const stations = SCHEDULES[trackerLine].stations;
+    const curIdx = stations.indexOf(rep.station);
+    const dotsHTML = stations.map((name, i) => {
+      let cls = '';
+      if (i < curIdx) cls = 'passed';
+      if (i === curIdx) cls = 'current';
+      return `<div class="station-dot"><div class="dot ${cls}"></div><span class="station-name ${cls==='current'?'cur':''}">${name}</span></div>`;
+    }).join('');
+    content.innerHTML = `
+      ${modeSelectorHTML()}
+      <div class="track-outer">
+        <div class="track-rail"><div class="track-fill" style="width:${curIdx>=0 ? (curIdx/(stations.length-1))*100 : 0}%"></div></div>
+        <div class="stations-row">${dotsHTML}</div>
+      </div>
+      <div class="tracker-info">
+        <div class="info-box" style="grid-column:1/-1">
+          <div class="label">Última posição reportada</div>
+          <div class="value small">📍 ${rep.station} · ${repAgeText}${rep.reporter_name ? ' · por ' + escapeHtml(rep.reporter_name) : ''} · fora do horário da grade, sem estimativa de deslocamento</div>
+        </div>
+      </div>
+      ${reportSectionHTML()}
+      ${disclaimerHTML()}
+    `;
+    return;
+  }
+
+  // mode === 'walking': reusa o mesmo motor de cálculo do oficial, só que
+  // ancorado no reporte real em vez do horário puro da tabela
+  const { curSt, nextTime, trip, stations, pct, waitMin } = state.result;
+  const n = stations.length;
+  const liveNow = nowMin() - state.impliedDelay;
+
+  const dotsHTML = stations.map((name, i) => {
+    const stMin = toMin(trip[i]);
+    let cls = '';
+    if (state.result.state === 'moving') {
+      if (liveNow > stMin && i <= curSt) cls = 'passed';
+      if (i === curSt) cls = 'current';
+    } else if (state.result.state === 'stopped') {
+      cls = i < n - 1 ? 'passed' : 'current';
+    }
+    return `<div class="station-dot"><div class="dot ${cls}"></div><span class="station-name ${cls==='current'?'cur':''}">${name}</span></div>`;
+  }).join('');
+
+  let situacao, infoLabel, infoValue;
+  if (state.result.state === 'moving') {
+    situacao = '🟢 Em viagem'; infoLabel = 'Próxima parada'; infoValue = nextTime;
+  } else if (state.result.state === 'stopped') {
+    situacao = '🟠 Parado no terminal'; infoLabel = 'Próxima saída em'; infoValue = `${waitMin || 0} min`;
+  } else {
+    situacao = '🟡 Aguardando operação'; infoLabel = 'Primeira saída'; infoValue = nextTime;
+  }
+
+  content.innerHTML = `
+    ${modeSelectorHTML()}
+    <div class="tracker-status-indicator">
+      <span class="tracker-status-dot" style="background:#f5c842;color:#f5c842;"></span>
+      <span>Ancorado no reporte: 📍 ${rep.station} · ${repAgeText}${rep.reporter_name ? ' · por ' + escapeHtml(rep.reporter_name) : ''} — andando conforme a grade a partir daí</span>
+    </div>
+    <p class="direction-label">Sentido: ${stations[0]} → ${stations[n-1]}</p>
+    <div class="track-outer">
+      <div class="track-rail"><div class="track-fill" style="width:${pct*100}%"></div></div>
+      <div class="vlt-icon" style="left:${pct*100}%">🚃</div>
+      <div class="stations-row">${dotsHTML}</div>
+    </div>
+    <div class="tracker-info">
+      <div class="info-box"><div class="label">Situação</div><div class="value small">${situacao}</div></div>
+      <div class="info-box"><div class="label">${infoLabel}</div><div class="value">${infoValue || '—'}</div></div>
+      <div class="info-box"><div class="label">Partida</div><div class="value">${trip[0]}</div></div>
+      <div class="info-box"><div class="label">Chegada</div><div class="value">${trip[n-1]}</div></div>
+    </div>
+    ${reportSectionHTML()}
+    ${disclaimerHTML()}
+  `;
+}
+
+let reportDir = 0; // AJUSTE: sentido selecionado pra reportar (0 = ida, 1 = volta)
+
+function selectReportDir(dir, btn) {
+  reportDir = dir;
+  btn.parentElement.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function reportSectionHTML() {
+  const stations = SCHEDULES[trackerLine].stations;
+  const savedName = localStorage.getItem('vlt_reporter_name') || '';
+  const from0 = stations[0], to0 = stations[stations.length - 1];
+  const buttons = stations.map(name =>
+    `<button class="report-btn" onclick="postCommunityReport('${name.replace(/'/g,"\\'")}')">${name}</button>`
+  ).join('');
+  return `
+    <div class="report-section">
+      <div class="stations-editor-label" style="margin:16px 0 8px">Sentido em que você viu o VLT</div>
+      <div class="dir-selector">
+        <button class="dir-btn ${reportDir===0?'active':''}" onclick="selectReportDir(0, this)">${from0} → ${to0}</button>
+        <button class="dir-btn ${reportDir===1?'active':''}" onclick="selectReportDir(1, this)">${to0} → ${from0}</button>
+      </div>
+      <div class="stations-editor-label" style="margin:16px 0 8px">Seu apelido (opcional, fica salvo neste aparelho)</div>
+      <input class="modal-input" id="reporter-name-input" style="margin-bottom:12px" maxlength="24" placeholder="ex: João" value="${escapeAttrJs(savedName)}" />
+      <div class="stations-editor-label" style="margin-bottom:8px">Vi o VLT em:</div>
+      <div class="report-buttons">${buttons}</div>
+    </div>
+  `;
+}
+function escapeAttrJs(t) { return String(t).replace(/"/g,'&quot;'); }
+
+async function postCommunityReport(station) {
+  const nameInput = document.getElementById('reporter-name-input');
+  const reporterName = nameInput ? nameInput.value.trim().slice(0, 24) : '';
+  localStorage.setItem('vlt_reporter_name', reporterName);
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/community_reports`, {
+      method: 'POST', headers: SB,
+      body: JSON.stringify({ line: trackerLine, station, dir: reportDir, reported_at: new Date().toISOString(), reporter_name: reporterName || null })
+    });
+    await loadCommunityReports();
+    renderTracker();
+  } catch(e) { alert('Erro ao enviar reporte.'); }
+}
+
+function modeSelectorHTML() {
+  return `
+    <div class="mode-selector">
+      <button class="mode-btn ${trackerMode==='oficial'?'active':''}" onclick="selectTrackerMode('oficial', this)">Oficial</button>
+      <button class="mode-btn ${trackerMode==='comunidade'?'active':''}" onclick="selectTrackerMode('comunidade', this)">Comunidade</button>
+    </div>
+  `;
+}
+
+function disclaimerHTML() {
+  return `<p class="tracker-disclaimer">⚠️ Este rastreador é uma simulação/estimativa. Em caso de dúvida, siga sempre a grade oficial de horários.</p>`;
 }
 
 // ── Horários ──
@@ -743,8 +1082,10 @@ function applyHeaderStatus() {
   // Mostra no header o status da linha atualmente selecionada no tracker
   const color = lineStatuses[trackerLine] || 'green';
   const s = STATUS_MAP[color] || STATUS_MAP.green;
+  const delay = lineDelays[trackerLine] || 0;
+  const delayText = delay > 0 ? ` (+${delay}min)` : '';
   document.getElementById('status-dot').style.cssText = `background:${s.color};box-shadow:0 0 8px ${s.color};width:14px;height:14px;border-radius:50%;flex-shrink:0`;
-  document.getElementById('status-label').textContent = `${trackerLine === 'sul' ? 'Sul' : 'Norte'}: ${s.label}`;
+  document.getElementById('status-label').textContent = `${trackerLine === 'sul' ? 'Sul' : 'Norte'}: ${s.label}${delayText}`;
 }
 
 function openStatusModal()  { document.getElementById('status-modal').classList.add('open'); document.getElementById('status-password').value=''; document.getElementById('modal-error').style.display='none'; }
@@ -849,13 +1190,42 @@ async function loadLinks() {
   } catch(e) { console.error(e); }
 }
 
+// ── Atraso manual (por linha) ──
+async function loadDelays() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/delays`, { headers: SB });
+    const data = await r.json();
+    const todayStr = new Date().toDateString();
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        // AJUSTE: reset automático - se o atraso foi definido em outro dia, ignora (trata como 0)
+        const isToday = item.updated_at && new Date(item.updated_at).toDateString() === todayStr;
+        if (item.line === 'sul')   lineDelays.sul   = isToday ? (item.minutes || 0) : 0;
+        if (item.line === 'norte') lineDelays.norte = isToday ? (item.minutes || 0) : 0;
+      });
+    }
+  } catch(e) {}
+}
+
+// ── Reportes da comunidade ──
+async function loadCommunityReports() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/community_reports?order=reported_at.desc&limit=50`, { headers: SB });
+    const data = await r.json();
+    communityReports.sul = (data || []).find(r => r.line === 'sul') || null;
+    communityReports.norte = (data || []).find(r => r.line === 'norte') || null;
+  } catch(e) {}
+}
+
 // ── Init ──
 async function init() {
-  await Promise.all([loadStatus(), loadComments(), loadLinks()]);
+  renderChangelog(); // AJUSTE: já preenche a versão no rodapé ao carregar
+  await Promise.all([loadStatus(), loadComments(), loadLinks(), loadDelays(), loadCommunityReports()]);
   renderTracker();
   renderSchedule();
   setInterval(renderTracker, 60000);
   setInterval(loadComments,  120000);
+  setInterval(async () => { await loadCommunityReports(); if (trackerMode==='comunidade') renderTracker(); }, 30000);
 }
 init();
 </script>
