@@ -83,6 +83,15 @@
     .admin-badge { font-size: 0.6rem; background: var(--yellow); color: #000; padding: 1px 5px; border-radius: 4px; font-weight: 700; }
     .comment-time { font-size: 0.65rem; color: var(--muted); }
     .comment-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+
+    /* AJUSTE: botão de selo de verificado nos reportes da comunidade */
+    .verify-btn {
+      margin-top: 6px; padding: 5px 10px; border-radius: 14px; border: 1px solid var(--border);
+      background: var(--panel); color: var(--muted); font-size: 0.68rem; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .verify-btn:hover { border-color: var(--green); color: var(--green2); }
+    .verify-btn.verified { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.12); }
     .expires-bar { height: 2px; background: var(--border); border-radius: 1px; margin-top: 8px; overflow: hidden; }
     .expires-fill { height: 100%; background: var(--green); border-radius: 1px; }
     .del-btn { background: transparent; border: 1px solid var(--border); color: var(--red); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .2s; }
@@ -558,6 +567,35 @@ function selectReportsLine(line, el) {
   loadCommunityReportsList();
 }
 
+let verifiedReporters = new Set(); // AJUSTE: ids de reporters já verificados pelo admin
+
+async function loadVerifiedReporters() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/verified_reporters?select=reporter_id`, { headers: SB });
+    const data = await r.json();
+    verifiedReporters = new Set((data || []).map(v => v.reporter_id));
+  } catch(e) {}
+}
+
+async function toggleVerifyReporter(reporterId, reporterName) {
+  if (!reporterId) return;
+  try {
+    if (verifiedReporters.has(reporterId)) {
+      await fetch(`${SUPABASE_URL}/rest/v1/verified_reporters?reporter_id=eq.${encodeURIComponent(reporterId)}`, { method: 'DELETE', headers: SB });
+      verifiedReporters.delete(reporterId);
+      showToast(`Selo removido de ${reporterName || 'anônimo'}.`);
+    } else {
+      await fetch(`${SUPABASE_URL}/rest/v1/verified_reporters`, {
+        method: 'POST', headers: SB,
+        body: JSON.stringify({ reporter_id: reporterId, name: reporterName || null, verified_at: new Date().toISOString() })
+      });
+      verifiedReporters.add(reporterId);
+      showToast(`${reporterName || 'Reportante'} verificado! ✅`);
+    }
+    await loadCommunityReportsList();
+  } catch(e) { showToast('Erro ao atualizar selo.'); }
+}
+
 async function loadCommunityReportsList() {
   const list = document.getElementById('community-reports-list');
   list.innerHTML = '<div class="empty-msg">Carregando reportes...</div>';
@@ -568,13 +606,25 @@ async function loadCommunityReportsList() {
       list.innerHTML = '<div class="empty-msg">Nenhum reporte da comunidade ainda.</div>';
       return;
     }
-    list.innerHTML = data.map(rep => `
+    list.innerHTML = data.map(rep => {
+      const isVerified = rep.reporter_id && verifiedReporters.has(rep.reporter_id);
+      const dirLabel = rep.dir === 1 ? '↩' : (rep.dir === 0 ? '↪' : '');
+      const verifyBtn = rep.reporter_id
+        ? `<button class="verify-btn ${isVerified?'verified':''}" onclick="toggleVerifyReporter('${rep.reporter_id.replace(/'/g,"\\'")}','${(rep.reporter_name||'').replace(/'/g,"\\'")}')">${isVerified ? '✅ Verificado' : 'Dar selo'}</button>`
+        : '';
+      return `
       <div class="comment-item">
         <div class="comment-content">
-          <div class="comment-meta"><span class="comment-author">📍 ${escapeHtml(rep.station)}</span>${rep.reporter_name ? `<span class="comment-author">· ${escapeHtml(rep.reporter_name)}</span>` : ''}<span class="comment-time">${timeAgo(rep.reported_at)}</span></div>
+          <div class="comment-meta">
+            <span class="comment-author">📍 ${dirLabel} ${escapeHtml(rep.station)}</span>
+            ${rep.reporter_name ? `<span class="comment-author">· ${escapeHtml(rep.reporter_name)}${isVerified ? ' ✅' : ''}</span>` : '<span class="comment-author">· anônimo</span>'}
+            <span class="comment-time">${timeAgo(rep.reported_at)}</span>
+          </div>
+          ${rep.comment ? `<div class="comment-text">💬 ${escapeHtml(rep.comment)}</div>` : ''}
+          ${verifyBtn}
         </div>
       </div>
-    `).join('');
+    `; }).join('');
   } catch(e) { list.innerHTML = '<div class="empty-msg">Erro ao carregar reportes.</div>'; }
 }
 
@@ -776,7 +826,7 @@ function escapeAttr(t)  { return String(t).replace(/"/g,'&quot;'); }
 
 // ── INIT ──
 async function initAdmin() {
-  await Promise.all([loadStatus(), loadLinks(), loadComments(), loadSchedules(), loadDelays()]);
+  await Promise.all([loadStatus(), loadLinks(), loadComments(), loadSchedules(), loadDelays(), loadVerifiedReporters()]);
   await loadCommunityReportsList();
   updateClock();
   setInterval(updateClock,   1000);
