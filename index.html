@@ -546,16 +546,23 @@ function timeAgo(iso) {
 }
 function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// AJUSTE: mostra "por Fulano ✅" com o selo se essa pessoa for verificada pelo admin
+// AJUSTE: mostra "Usuário #003 ✅" com o selo — o apelido não fica público, só no admin
 function reporterLineHTML(rep) {
-  if (!rep.reporter_name) return '';
+  if (!rep.reporter_seq) return '';
   const isVerified = rep.reporter_id && verifiedReporters.has(rep.reporter_id);
-  return ' · por ' + escapeHtml(rep.reporter_name) + (isVerified ? ' <span class="verified-badge" title="Reportante verificado pelo admin">✅</span>' : '');
+  const label = 'Usuário #' + String(rep.reporter_seq).padStart(3, '0');
+  return ' · ' + escapeHtml(label) + (isVerified ? ' <span class="verified-badge" title="Costuma reportar certo — verificado pelo admin">✅</span>' : '');
 }
 
 // ── AJUSTE: versão e changelog do site ──
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.4.1';
 const CHANGELOG = [
+  {
+    version: '1.4.1', date: '15/08/2026',
+    items: [
+      'O apelido de quem reporta não fica mais público — agora cada pessoa aparece como um número (ex: Usuário #003). O apelido continua visível só pra você, no admin, pra ajudar a decidir quem verificar.',
+    ]
+  },
   {
     version: '1.4.0', date: '15/08/2026',
     items: [
@@ -1014,6 +1021,31 @@ function getOrCreateReporterId() {
   return id;
 }
 
+// AJUSTE: cada pessoa ganha um número público sequencial (Usuário #003) em vez
+// de mostrar o apelido pra todo mundo — o apelido fica só visível pro admin.
+async function getOrCreateReporterSeq(reporterId) {
+  const cached = localStorage.getItem('vlt_reporter_seq');
+  if (cached) return parseInt(cached, 10);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/reporter_ids?reporter_id=eq.${encodeURIComponent(reporterId)}&select=seq_number`, { headers: SB });
+    const existing = await r.json();
+    if (existing && existing.length > 0) {
+      localStorage.setItem('vlt_reporter_seq', existing[0].seq_number);
+      return existing[0].seq_number;
+    }
+    const created = await fetch(`${SUPABASE_URL}/rest/v1/reporter_ids`, {
+      method: 'POST', headers: { ...SB, 'Prefer': 'return=representation' },
+      body: JSON.stringify({ reporter_id: reporterId })
+    });
+    const createdData = await created.json();
+    if (createdData && createdData[0]) {
+      localStorage.setItem('vlt_reporter_seq', createdData[0].seq_number);
+      return createdData[0].seq_number;
+    }
+  } catch(e) {}
+  return null;
+}
+
 function reportSectionHTML() {
   const stations = SCHEDULES[trackerLine].stations;
   const savedName = localStorage.getItem('vlt_reporter_name') || '';
@@ -1028,7 +1060,7 @@ function reportSectionHTML() {
         <button class="dir-btn ${reportDir===0?'active':''}" onclick="selectReportDir(0, this)">${from0} → ${to0}</button>
         <button class="dir-btn ${reportDir===1?'active':''}" onclick="selectReportDir(1, this)">${to0} → ${from0}</button>
       </div>
-      <div class="stations-editor-label" style="margin:16px 0 8px">Seu apelido (opcional, fica salvo neste aparelho)</div>
+      <div class="stations-editor-label" style="margin:16px 0 8px">Seu apelido (opcional, só o admin vê — publicamente você aparece como um número)</div>
       <input class="modal-input" id="reporter-name-input" style="margin-bottom:12px" maxlength="24" placeholder="ex: João" value="${escapeAttrJs(savedName)}" />
       <div class="stations-editor-label" style="margin-bottom:8px">Comentário (opcional)</div>
       <input class="modal-input" id="reporter-comment-input" style="margin-bottom:12px" maxlength="120" placeholder="ex: parado esperando liberação" />
@@ -1050,6 +1082,7 @@ async function confirmCommunityReport() {
   localStorage.setItem('vlt_reporter_name', reporterName);
   const reporterId = getOrCreateReporterId(); // AJUSTE: id próprio da pessoa, salvo neste aparelho
   if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+  const reporterSeq = await getOrCreateReporterSeq(reporterId); // AJUSTE: número público (Usuário #003)
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/community_reports`, {
       method: 'POST', headers: SB,
@@ -1058,6 +1091,7 @@ async function confirmCommunityReport() {
         reported_at: new Date().toISOString(),
         reporter_name: reporterName || null,
         reporter_id: reporterId,
+        reporter_seq: reporterSeq,
         comment: comment || null,
       })
     });
