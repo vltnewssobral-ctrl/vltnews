@@ -92,6 +92,7 @@
     }
     .verify-btn:hover { border-color: var(--green); color: var(--green2); }
     .verify-btn.verified { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.12); }
+    .reporter-nickname { color: var(--muted) !important; font-weight: 400 !important; font-style: italic; }
     .expires-bar { height: 2px; background: var(--border); border-radius: 1px; margin-top: 8px; overflow: hidden; }
     .expires-fill { height: 100%; background: var(--green); border-radius: 1px; }
     .del-btn { background: transparent; border: 1px solid var(--border); color: var(--red); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .2s; }
@@ -609,6 +610,7 @@ async function loadCommunityReportsList() {
     list.innerHTML = data.map(rep => {
       const isVerified = rep.reporter_id && verifiedReporters.has(rep.reporter_id);
       const dirLabel = rep.dir === 1 ? '↩' : (rep.dir === 0 ? '↪' : '');
+      const userLabel = rep.reporter_seq ? 'Usuário #' + String(rep.reporter_seq).padStart(3, '0') : 'anônimo';
       const verifyBtn = rep.reporter_id
         ? `<button class="verify-btn ${isVerified?'verified':''}" onclick="toggleVerifyReporter('${rep.reporter_id.replace(/'/g,"\\'")}','${(rep.reporter_name||'').replace(/'/g,"\\'")}')">${isVerified ? '✅ Verificado' : 'Dar selo'}</button>`
         : '';
@@ -617,7 +619,8 @@ async function loadCommunityReportsList() {
         <div class="comment-content">
           <div class="comment-meta">
             <span class="comment-author">📍 ${dirLabel} ${escapeHtml(rep.station)}</span>
-            ${rep.reporter_name ? `<span class="comment-author">· ${escapeHtml(rep.reporter_name)}${isVerified ? ' ✅' : ''}</span>` : '<span class="comment-author">· anônimo</span>'}
+            <span class="comment-author">· ${escapeHtml(userLabel)}${isVerified ? ' ✅' : ''}</span>
+            ${rep.reporter_name ? `<span class="comment-author reporter-nickname">(apelido: ${escapeHtml(rep.reporter_name)})</span>` : ''}
             <span class="comment-time">${timeAgo(rep.reported_at)}</span>
           </div>
           ${rep.comment ? `<div class="comment-text">💬 ${escapeHtml(rep.comment)}</div>` : ''}
