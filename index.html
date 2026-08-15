@@ -103,11 +103,22 @@
       font-size: 0.75rem; cursor: pointer; transition: all .2s;
     }
     .report-btn:hover { border-color: var(--green); color: var(--green2); }
+    .report-btn.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.15); }
 
     .tracker-disclaimer {
       margin-top: 16px; font-size: 0.65rem; color: var(--muted); text-align: center;
       line-height: 1.4; border-top: 1px dashed var(--border); padding-top: 10px;
     }
+
+    /* AJUSTE: toast global de feedback (sobrevive ao re-render do rastreador) */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--green); color: #fff; padding: 12px 24px; border-radius: 30px;
+      font-weight: 700; font-size: 0.85rem; transition: transform .3s; z-index: 999;
+      white-space: nowrap; max-width: 90vw; text-align: center;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); }
 
     /* Track */
     .track-outer {
@@ -248,6 +259,7 @@
     .btn-cancel { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; font-size: 0.85rem; }
     .btn-save { flex: 2; padding: 10px; border: none; border-radius: 8px; background: var(--green); color: #fff; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: background .2s; }
     .btn-save:hover { background: var(--green2); }
+    .btn-save:disabled { background: #3a3a3a; color: var(--muted); cursor: not-allowed; }
     .modal-error { font-size: 0.78rem; color: var(--red); margin-bottom: 10px; display: none; }
 
     /* AJUSTE: changelog */
@@ -391,6 +403,8 @@
     </div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const SUPABASE_URL  = 'https://fvuzlemkhpfoxjkjcnih.supabase.co';
@@ -961,7 +975,8 @@ function renderTrackerComunidade() {
   `;
 }
 
-let reportDir = 0; // AJUSTE: sentido selecionado pra reportar (0 = ida, 1 = volta)
+let reportDir = 0;       // AJUSTE: sentido selecionado pra reportar (0 = ida, 1 = volta)
+let reportStation = null; // AJUSTE: estação selecionada, só envia ao confirmar
 
 function selectReportDir(dir, btn) {
   reportDir = dir;
@@ -969,12 +984,20 @@ function selectReportDir(dir, btn) {
   btn.classList.add('active');
 }
 
+function selectReportStation(name, btn) {
+  reportStation = name;
+  btn.parentElement.querySelectorAll('.report-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const confirmBtn = document.getElementById('confirm-report-btn');
+  if (confirmBtn) confirmBtn.disabled = false;
+}
+
 function reportSectionHTML() {
   const stations = SCHEDULES[trackerLine].stations;
   const savedName = localStorage.getItem('vlt_reporter_name') || '';
   const from0 = stations[0], to0 = stations[stations.length - 1];
   const buttons = stations.map(name =>
-    `<button class="report-btn" onclick="postCommunityReport('${name.replace(/'/g,"\\'")}')">${name}</button>`
+    `<button class="report-btn ${reportStation===name?'active':''}" onclick="selectReportStation('${name.replace(/'/g,"\\'")}', this)">${name}</button>`
   ).join('');
   return `
     <div class="report-section">
@@ -987,23 +1010,41 @@ function reportSectionHTML() {
       <input class="modal-input" id="reporter-name-input" style="margin-bottom:12px" maxlength="24" placeholder="ex: João" value="${escapeAttrJs(savedName)}" />
       <div class="stations-editor-label" style="margin-bottom:8px">Vi o VLT em:</div>
       <div class="report-buttons">${buttons}</div>
+      <button class="btn-save" id="confirm-report-btn" style="width:100%;margin-top:14px;padding:12px" ${reportStation?'':'disabled'} onclick="confirmCommunityReport()">Confirmar reporte</button>
     </div>
   `;
 }
 function escapeAttrJs(t) { return String(t).replace(/"/g,'&quot;'); }
 
-async function postCommunityReport(station) {
+async function confirmCommunityReport() {
+  if (!reportStation) return;
+  const btn = document.getElementById('confirm-report-btn');
   const nameInput = document.getElementById('reporter-name-input');
   const reporterName = nameInput ? nameInput.value.trim().slice(0, 24) : '';
   localStorage.setItem('vlt_reporter_name', reporterName);
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/community_reports`, {
       method: 'POST', headers: SB,
-      body: JSON.stringify({ line: trackerLine, station, dir: reportDir, reported_at: new Date().toISOString(), reporter_name: reporterName || null })
+      body: JSON.stringify({ line: trackerLine, station: reportStation, dir: reportDir, reported_at: new Date().toISOString(), reporter_name: reporterName || null })
     });
+    showReportToast('✅ Reporte enviado! Obrigado por ajudar.', false);
+    reportStation = null;
     await loadCommunityReports();
     renderTracker();
-  } catch(e) { alert('Erro ao enviar reporte.'); }
+  } catch(e) {
+    showReportToast('❌ Erro ao enviar reporte. Confira o Supabase.', true);
+    if (btn) { btn.disabled = false; btn.textContent = 'Confirmar reporte'; }
+  }
+}
+
+function showReportToast(msg, isError) {
+  const el = document.getElementById('toast');
+  if (!el) { alert(msg); return; }
+  el.textContent = msg;
+  el.classList.toggle('error', !!isError);
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
 }
 
 function modeSelectorHTML() {
