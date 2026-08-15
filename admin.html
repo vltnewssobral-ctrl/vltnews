@@ -54,6 +54,13 @@
     .current-status-bar { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.82rem; color: var(--muted); }
     #current-status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
+    /* AJUSTE: atraso manual */
+    .delay-block { margin-top: 4px; }
+    .delay-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+    .delay-input { width: 90px; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.95rem; text-align: center; outline: none; transition: border-color .2s; }
+    .delay-input:focus { border-color: var(--green); }
+    .delay-hint { font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
+
     .link-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
     .link-icon-label { font-size: 1.1rem; width: 32px; text-align: center; flex-shrink: 0; }
     .link-name-input, .link-url-input { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s; }
@@ -171,6 +178,32 @@
           <div class="status-opt"          data-color="black"  onclick="selectStatus(this)"><div class="sdot" style="background:#555"></div> Fora de operação</div>
         </div>
         <button class="save-btn" onclick="saveStatus()">Salvar Status</button>
+
+        <!-- AJUSTE: atraso manual por linha -->
+        <div class="delay-block">
+          <div class="stations-editor-label" style="margin-top:18px">Atraso atual (minutos) — <span id="delay-line-label">Linha Sul</span></div>
+          <div class="delay-row">
+            <input class="delay-input" id="delay-input" type="number" min="0" step="1" value="0" />
+            <button class="reset-btn" onclick="clearDelay()">Zerar atraso</button>
+            <button class="save-btn" onclick="saveDelay()">Salvar Atraso</button>
+          </div>
+          <div class="delay-hint" id="delay-hint"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AJUSTE: reportes da comunidade -->
+    <div class="card">
+      <div class="card-header"><span>👀</span><h2>Reportes da Comunidade</h2></div>
+      <div class="card-body">
+        <div class="status-line-tabs">
+          <div class="status-line-tab active" onclick="selectReportsLine('sul', this)">🟢 VLT Sul</div>
+          <div class="status-line-tab" onclick="selectReportsLine('norte', this)">🔵 VLT Norte</div>
+        </div>
+        <div class="comments-list" id="community-reports-list">
+          <div class="empty-msg">Carregando reportes...</div>
+        </div>
+        <button class="reset-btn" style="margin-top:12px" onclick="clearCommunityReports()">🗑 Limpar reportes desta linha</button>
       </div>
     </div>
 
@@ -358,6 +391,8 @@ const DEFAULT_SCHEDULES = {
 let selectedStatus  = 'green';
 let activeStatusLine = 'sul';
 let statusData = { sul: 'green', norte: 'green' }; // armazena status de cada linha
+let delayData  = { sul: 0, norte: 0 };             // AJUSTE: atraso manual por linha
+let activeReportsLine = 'sul';                     // AJUSTE: linha ativa no painel de reportes
 let linksData       = [];
 let schedules       = JSON.parse(JSON.stringify(DEFAULT_SCHEDULES));
 let activeSchedLine = 'sul';
@@ -392,7 +427,7 @@ function showToast(msg) {
 function updateClock() {
   const now = new Date();
   document.getElementById('stat-time').textContent =
-    now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
 // ── STATUS (por linha) ──
@@ -425,9 +460,10 @@ function applyStatusToUI() {
 
 function selectStatusLine(line, el) {
   activeStatusLine = line;
-  document.querySelectorAll('.status-line-tab').forEach(t => t.classList.remove('active'));
+  el.parentElement.querySelectorAll('.status-line-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   applyStatusToUI();
+  applyDelayToUI();
 }
 
 function selectStatus(el) {
@@ -457,6 +493,98 @@ async function saveStatus() {
   statusData[line] = color;
   applyStatusToUI();
   showToast(`Status da ${line === 'sul' ? 'Linha Sul' : 'Linha Norte'} atualizado!`);
+}
+
+// ── ATRASO MANUAL (por linha, reseta sozinho à meia-noite) ──
+async function loadDelays() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/delays`, { headers: SB });
+    const data = await r.json();
+    const todayStr = new Date().toDateString();
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        const isToday = item.updated_at && new Date(item.updated_at).toDateString() === todayStr;
+        const minutes = isToday ? (item.minutes || 0) : 0;
+        if (item.line === 'sul')   delayData.sul   = minutes;
+        if (item.line === 'norte') delayData.norte = minutes;
+      });
+    }
+  } catch(e) {}
+  applyDelayToUI();
+}
+
+function applyDelayToUI() {
+  document.getElementById('delay-line-label').textContent = activeStatusLine === 'sul' ? 'Linha Sul' : 'Linha Norte';
+  document.getElementById('delay-input').value = delayData[activeStatusLine] || 0;
+  document.getElementById('delay-hint').textContent = (delayData[activeStatusLine] || 0) > 0
+    ? 'O atraso reseta automaticamente à meia-noite.'
+    : 'Sem atraso reportado para esta linha.';
+}
+
+async function saveDelay() {
+  const line = activeStatusLine;
+  const minutes = Math.max(0, parseInt(document.getElementById('delay-input').value, 10) || 0);
+  try {
+    const check = await fetch(`${SUPABASE_URL}/rest/v1/delays?line=eq.${line}`, { headers: SB });
+    const existing = await check.json();
+    if (existing && existing.length > 0) {
+      await fetch(`${SUPABASE_URL}/rest/v1/delays?line=eq.${line}`, {
+        method: 'PATCH', headers: SB,
+        body: JSON.stringify({ minutes, updated_at: new Date().toISOString() })
+      });
+    } else {
+      await fetch(`${SUPABASE_URL}/rest/v1/delays`, {
+        method: 'POST', headers: SB,
+        body: JSON.stringify({ line, minutes, updated_at: new Date().toISOString() })
+      });
+    }
+    delayData[line] = minutes;
+    applyDelayToUI();
+    showToast(`Atraso da ${line === 'sul' ? 'Linha Sul' : 'Linha Norte'} salvo!`);
+  } catch(e) { showToast('Erro ao salvar atraso.'); }
+}
+
+function clearDelay() {
+  document.getElementById('delay-input').value = 0;
+  saveDelay();
+}
+
+// ── REPORTES DA COMUNIDADE (leitura/moderação) ──
+function selectReportsLine(line, el) {
+  activeReportsLine = line;
+  const tabs = el.parentElement.querySelectorAll('.status-line-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadCommunityReportsList();
+}
+
+async function loadCommunityReportsList() {
+  const list = document.getElementById('community-reports-list');
+  list.innerHTML = '<div class="empty-msg">Carregando reportes...</div>';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/community_reports?line=eq.${activeReportsLine}&order=reported_at.desc&limit=20`, { headers: SB });
+    const data = await r.json();
+    if (!data || data.length === 0) {
+      list.innerHTML = '<div class="empty-msg">Nenhum reporte da comunidade ainda.</div>';
+      return;
+    }
+    list.innerHTML = data.map(rep => `
+      <div class="comment-item">
+        <div class="comment-content">
+          <div class="comment-meta"><span class="comment-author">📍 ${escapeHtml(rep.station)}</span>${rep.reporter_name ? `<span class="comment-author">· ${escapeHtml(rep.reporter_name)}</span>` : ''}<span class="comment-time">${timeAgo(rep.reported_at)}</span></div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { list.innerHTML = '<div class="empty-msg">Erro ao carregar reportes.</div>'; }
+}
+
+async function clearCommunityReports() {
+  if (!confirm('Apagar todos os reportes da comunidade para a ' + (activeReportsLine === 'sul' ? 'Linha Sul' : 'Linha Norte') + '?')) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/community_reports?line=eq.${activeReportsLine}`, { method: 'DELETE', headers: SB });
+    await loadCommunityReportsList();
+    showToast('Reportes removidos.');
+  } catch(e) { showToast('Erro ao limpar reportes.'); }
 }
 
 // ── LINKS ──
@@ -648,9 +776,10 @@ function escapeAttr(t)  { return String(t).replace(/"/g,'&quot;'); }
 
 // ── INIT ──
 async function initAdmin() {
-  await Promise.all([loadStatus(), loadLinks(), loadComments(), loadSchedules()]);
+  await Promise.all([loadStatus(), loadLinks(), loadComments(), loadSchedules(), loadDelays()]);
+  await loadCommunityReportsList();
   updateClock();
-  setInterval(updateClock,   30000);
+  setInterval(updateClock,   1000);
   setInterval(loadComments,  60000);
 }
 </script>
