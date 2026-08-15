@@ -104,6 +104,8 @@
     }
     .report-btn:hover { border-color: var(--green); color: var(--green2); }
     .report-btn.active { border-color: var(--green); color: var(--green2); background: rgba(26,122,60,.15); }
+    .verified-badge { font-size: 0.75em; }
+    .report-comment { margin-top: 8px; font-size: 0.78rem; color: var(--text); font-style: italic; background: var(--panel); border-left: 2px solid var(--green); padding: 8px 10px; border-radius: 6px; }
 
     .tracker-disclaimer {
       margin-top: 16px; font-size: 0.65rem; color: var(--muted); text-align: center;
@@ -532,6 +534,7 @@ let schedDir  = 0;
 let lineStatuses = { sul: 'green', norte: 'green' }; // AJUSTE: status por linha
 let lineDelays   = { sul: 0, norte: 0 };             // AJUSTE: atraso manual (minutos) por linha
 let communityReports = { sul: null, norte: null };   // AJUSTE: último reporte da comunidade por linha
+let verifiedReporters = new Set();                    // AJUSTE: ids de reporters com selo de verificado
 
 function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
 function nowMin() { const n = new Date(); return n.getHours()*60+n.getMinutes(); }
@@ -543,9 +546,24 @@ function timeAgo(iso) {
 }
 function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// AJUSTE: mostra "por Fulano ✅" com o selo se essa pessoa for verificada pelo admin
+function reporterLineHTML(rep) {
+  if (!rep.reporter_name) return '';
+  const isVerified = rep.reporter_id && verifiedReporters.has(rep.reporter_id);
+  return ' · por ' + escapeHtml(rep.reporter_name) + (isVerified ? ' <span class="verified-badge" title="Reportante verificado pelo admin">✅</span>' : '');
+}
+
 // ── AJUSTE: versão e changelog do site ──
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.4.0';
 const CHANGELOG = [
+  {
+    version: '1.4.0', date: '15/08/2026',
+    items: [
+      'Status/atraso oficial agora aparece nos dois modos (Oficial e Comunidade), não só no Oficial.',
+      'Reporte da comunidade ganhou campo de comentário opcional, visível pra quem for conferir.',
+      'Cada pessoa que reporta ganha um ID próprio (salvo no aparelho) e o admin pode dar um selo de "verificado" pra quem reporta direitinho.',
+    ]
+  },
   {
     version: '1.3.0', date: '15/08/2026',
     items: [
@@ -776,18 +794,8 @@ function renderTrackerOficial() {
   const n   = stations.length;
   const now = effectiveNowMin(trackerLine); // AJUSTE: mesmo "agora" usado no cálculo do estado
 
-  // AJUSTE: indicador de status da linha (+ atraso manual, se houver)
-  const lineStatus = lineStatuses[trackerLine] || 'green';
-  const statusColor = STATUS_MAP[lineStatus]?.color || '#1a7a3c';
-  const statusLabel = STATUS_MAP[lineStatus]?.label || 'No horário';
-  const delay = lineDelays[trackerLine] || 0;
-  const delayText = delay > 0 ? ` (+${delay} min)` : '';
-  const statusIndicatorHTML = `
-    <div class="tracker-status-indicator">
-      <span class="tracker-status-dot" style="background:${statusColor}; color:${statusColor};"></span>
-      <span>${trackerLine === 'sul' ? 'Linha Sul' : 'Linha Norte'}: ${statusLabel}${delayText}</span>
-    </div>
-  `;
+  // AJUSTE: indicador de status da linha (+ atraso manual) — aparece nos dois modos
+  const statusIndicatorHTML = officialStatusIndicatorHTML(trackerLine);
 
   const dotsHTML = stations.map((name, i) => {
     const tripIdx = i;
@@ -887,6 +895,7 @@ function renderTrackerComunidade() {
   if (!state) {
     content.innerHTML = `
       ${modeSelectorHTML()}
+      ${officialStatusIndicatorHTML(trackerLine)}
       <div class="no-trip">👀 Sem reportes recentes da comunidade nessa linha.<br>Seja o primeiro a avisar onde viu o VLT!</div>
       ${reportSectionHTML()}
       ${disclaimerHTML()}
@@ -909,6 +918,7 @@ function renderTrackerComunidade() {
     }).join('');
     content.innerHTML = `
       ${modeSelectorHTML()}
+      ${officialStatusIndicatorHTML(trackerLine)}
       <div class="track-outer">
         <div class="track-rail"><div class="track-fill" style="width:${curIdx>=0 ? (curIdx/(stations.length-1))*100 : 0}%"></div></div>
         <div class="stations-row">${dotsHTML}</div>
@@ -916,7 +926,8 @@ function renderTrackerComunidade() {
       <div class="tracker-info">
         <div class="info-box" style="grid-column:1/-1">
           <div class="label">Última posição reportada</div>
-          <div class="value small">📍 ${rep.station} · ${repAgeText}${rep.reporter_name ? ' · por ' + escapeHtml(rep.reporter_name) : ''} · fora do horário da grade, sem estimativa de deslocamento</div>
+          <div class="value small">📍 ${rep.station} · ${repAgeText}${reporterLineHTML(rep)} · fora do horário da grade, sem estimativa de deslocamento</div>
+          ${rep.comment ? `<div class="report-comment">💬 "${escapeHtml(rep.comment)}"</div>` : ''}
         </div>
       </div>
       ${reportSectionHTML()}
@@ -954,10 +965,12 @@ function renderTrackerComunidade() {
 
   content.innerHTML = `
     ${modeSelectorHTML()}
+    ${officialStatusIndicatorHTML(trackerLine)}
     <div class="tracker-status-indicator">
       <span class="tracker-status-dot" style="background:#f5c842;color:#f5c842;"></span>
-      <span>Ancorado no reporte: 📍 ${rep.station} · ${repAgeText}${rep.reporter_name ? ' · por ' + escapeHtml(rep.reporter_name) : ''} — andando conforme a grade a partir daí</span>
+      <span>Ancorado no reporte: 📍 ${rep.station} · ${repAgeText}${reporterLineHTML(rep)} — andando conforme a grade a partir daí</span>
     </div>
+    ${rep.comment ? `<div class="report-comment">💬 "${escapeHtml(rep.comment)}"</div>` : ''}
     <p class="direction-label">Sentido: ${stations[0]} → ${stations[n-1]}</p>
     <div class="track-outer">
       <div class="track-rail"><div class="track-fill" style="width:${pct*100}%"></div></div>
@@ -992,6 +1005,15 @@ function selectReportStation(name, btn) {
   if (confirmBtn) confirmBtn.disabled = false;
 }
 
+function getOrCreateReporterId() {
+  let id = localStorage.getItem('vlt_reporter_id');
+  if (!id) {
+    id = (crypto.randomUUID ? crypto.randomUUID() : 'r-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+    localStorage.setItem('vlt_reporter_id', id);
+  }
+  return id;
+}
+
 function reportSectionHTML() {
   const stations = SCHEDULES[trackerLine].stations;
   const savedName = localStorage.getItem('vlt_reporter_name') || '';
@@ -1008,6 +1030,8 @@ function reportSectionHTML() {
       </div>
       <div class="stations-editor-label" style="margin:16px 0 8px">Seu apelido (opcional, fica salvo neste aparelho)</div>
       <input class="modal-input" id="reporter-name-input" style="margin-bottom:12px" maxlength="24" placeholder="ex: João" value="${escapeAttrJs(savedName)}" />
+      <div class="stations-editor-label" style="margin-bottom:8px">Comentário (opcional)</div>
+      <input class="modal-input" id="reporter-comment-input" style="margin-bottom:12px" maxlength="120" placeholder="ex: parado esperando liberação" />
       <div class="stations-editor-label" style="margin-bottom:8px">Vi o VLT em:</div>
       <div class="report-buttons">${buttons}</div>
       <button class="btn-save" id="confirm-report-btn" style="width:100%;margin-top:14px;padding:12px" ${reportStation?'':'disabled'} onclick="confirmCommunityReport()">Confirmar reporte</button>
@@ -1020,13 +1044,22 @@ async function confirmCommunityReport() {
   if (!reportStation) return;
   const btn = document.getElementById('confirm-report-btn');
   const nameInput = document.getElementById('reporter-name-input');
+  const commentInput = document.getElementById('reporter-comment-input');
   const reporterName = nameInput ? nameInput.value.trim().slice(0, 24) : '';
+  const comment = commentInput ? commentInput.value.trim().slice(0, 120) : '';
   localStorage.setItem('vlt_reporter_name', reporterName);
+  const reporterId = getOrCreateReporterId(); // AJUSTE: id próprio da pessoa, salvo neste aparelho
   if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/community_reports`, {
       method: 'POST', headers: SB,
-      body: JSON.stringify({ line: trackerLine, station: reportStation, dir: reportDir, reported_at: new Date().toISOString(), reporter_name: reporterName || null })
+      body: JSON.stringify({
+        line: trackerLine, station: reportStation, dir: reportDir,
+        reported_at: new Date().toISOString(),
+        reporter_name: reporterName || null,
+        reporter_id: reporterId,
+        comment: comment || null,
+      })
     });
     showReportToast('✅ Reporte enviado! Obrigado por ajudar.', false);
     reportStation = null;
@@ -1052,6 +1085,21 @@ function modeSelectorHTML() {
     <div class="mode-selector">
       <button class="mode-btn ${trackerMode==='oficial'?'active':''}" onclick="selectTrackerMode('oficial', this)">Oficial</button>
       <button class="mode-btn ${trackerMode==='comunidade'?'active':''}" onclick="selectTrackerMode('comunidade', this)">Comunidade</button>
+    </div>
+  `;
+}
+
+// AJUSTE: indicador de status oficial (+ atraso admin) — usado nos dois modos
+function officialStatusIndicatorHTML(line) {
+  const lineStatus = lineStatuses[line] || 'green';
+  const statusColor = STATUS_MAP[lineStatus]?.color || '#1a7a3c';
+  const statusLabel = STATUS_MAP[lineStatus]?.label || 'No horário';
+  const delay = lineDelays[line] || 0;
+  const delayText = delay > 0 ? ` (+${delay} min)` : '';
+  return `
+    <div class="tracker-status-indicator">
+      <span class="tracker-status-dot" style="background:${statusColor}; color:${statusColor};"></span>
+      <span>${line === 'sul' ? 'Linha Sul' : 'Linha Norte'}: ${statusLabel}${delayText}</span>
     </div>
   `;
 }
@@ -1258,15 +1306,23 @@ async function loadCommunityReports() {
   } catch(e) {}
 }
 
+// ── Reporters verificados (selo dado pelo admin) ──
+async function loadVerifiedReporters() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/verified_reporters?select=reporter_id`, { headers: SB });
+    const data = await r.json();
+    verifiedReporters = new Set((data || []).map(v => v.reporter_id));
+  } catch(e) {}
+}
 // ── Init ──
 async function init() {
   renderChangelog(); // AJUSTE: já preenche a versão no rodapé ao carregar
-  await Promise.all([loadStatus(), loadComments(), loadLinks(), loadDelays(), loadCommunityReports()]);
+  await Promise.all([loadStatus(), loadComments(), loadLinks(), loadDelays(), loadCommunityReports(), loadVerifiedReporters()]);
   renderTracker();
   renderSchedule();
   setInterval(renderTracker, 60000);
   setInterval(loadComments,  120000);
-  setInterval(async () => { await loadCommunityReports(); if (trackerMode==='comunidade') renderTracker(); }, 30000);
+  setInterval(async () => { await Promise.all([loadCommunityReports(), loadVerifiedReporters()]); if (trackerMode==='comunidade') renderTracker(); }, 30000);
 }
 init();
 </script>
